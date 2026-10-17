@@ -16,12 +16,14 @@
 html,body{background:var(--loam);color:var(--sprout);font-family:var(--f-body)}
 body{background:radial-gradient(1200px 600px at 50% -10%, var(--plot-2), var(--loam) 70%) fixed, var(--loam)}
 .wrap{max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:14px 40px;display:grid;gap:14px}
-button,select{font:inherit}
+button,select,input{font:inherit}
 button{background:var(--marigold);color:var(--ink);border:0;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer}
 button.ghost{background:transparent;color:var(--sprout);border:1px solid var(--line)}
+button.small{padding:4px 10px;font-size:13px}
 button:disabled{opacity:.35;cursor:not-allowed}
-button:focus-visible,select:focus-visible,[data-act]:focus-visible{outline:2px solid var(--marigold);outline-offset:2px}
-select{background:var(--plot);color:var(--sprout);border:1px solid var(--line);border-radius:8px;padding:7px 8px}
+button:focus-visible,select:focus-visible,input:focus-visible,[data-act]:focus-visible{outline:2px solid var(--marigold);outline-offset:2px}
+select,input{background:var(--plot);color:var(--sprout);border:1px solid var(--line);border-radius:8px;padding:7px 8px}
+input{min-width:0}
 .label{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700}
 .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
 
@@ -35,18 +37,40 @@ h1 small{display:block;font-family:var(--f-body);font-size:12px;color:var(--mute
 .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .controls label{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
 
+/* setup + lobby */
+.setup{display:grid;gap:16px}
+.setup-intro{display:grid;gap:8px;max-width:420px}
+.setup-intro p{margin:0;font-size:16px;line-height:1.5}
+.setup-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.panel{background:var(--plot);border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;gap:10px;align-content:start;min-width:0}
+.panel h3{font-family:var(--f-display);font-weight:400;font-size:24px;margin:0;line-height:1.1}
+.panel p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+.field-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#joincode{text-transform:uppercase;letter-spacing:.2em;font-family:var(--f-mono);width:9ch}
+.lobby{display:grid;gap:14px;max-width:560px}
+.code{font-family:var(--f-mono);font-size:40px;letter-spacing:.25em;color:var(--marigold);line-height:1}
+.seats{display:grid;gap:6px}
+.seat{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--plot-2);border-radius:8px;padding:8px 12px}
+.badge{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;border-radius:999px;padding:2px 8px;background:var(--line);color:var(--sprout)}
+.badge.ai{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.badge.off{background:var(--warn);color:var(--ink)}
+.stepper{display:flex;align-items:center;gap:8px}
+.stepper b{font-family:var(--f-mono);font-size:18px;min-width:2ch;text-align:center}
+.linkbox{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.linkbox input{flex:1 1 220px;font-family:var(--f-mono);font-size:13px}
+
 /* rivals */
-#opps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.opp{background:var(--plot);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:8px;min-width:0}
+#opps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.opp{background:var(--plot);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:8px;min-width:0;align-content:start}
 .opp.active{border-color:var(--marigold);box-shadow:0 0 0 1px var(--marigold) inset}
-.opp-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.opp-name{font-family:var(--f-display);font-size:22px;line-height:1}
+.opp-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.opp-name{font-family:var(--f-display);font-size:22px;line-height:1;display:flex;gap:8px;align-items:center}
 .opp-meta{font-size:12px;color:var(--muted);display:flex;gap:10px}
 .minis{display:flex;flex-wrap:wrap;gap:6px}
 .mini{display:flex;align-items:center;gap:6px;background:var(--plot-2);border-radius:8px;padding:4px 8px 4px 4px;font-size:13px;min-width:0}
 .mini.empty{color:var(--muted);padding:4px 8px}
-.chip{width:16px;height:22px;border-radius:50% 50% 46% 54%/62% 62% 38% 38%;background:var(--bean);box-shadow:inset -3px -3px 0 rgba(0,0,0,.18)}
-.backs{display:flex;gap:2px;align-items:center}
+.chip{width:16px;height:22px;flex:0 0 auto;border-radius:50% 50% 46% 54%/62% 62% 38% 38%;background:var(--bean);box-shadow:inset -3px -3px 0 rgba(0,0,0,.18)}
+.backs{display:flex;gap:2px;align-items:center;flex-wrap:wrap}
 .back{width:10px;height:14px;border-radius:2px;background:repeating-linear-gradient(45deg,var(--line) 0 2px,var(--plot-2) 2px 4px);border:1px solid var(--line)}
 .pend-row{font-size:12px;color:var(--muted);display:flex;gap:4px;flex-wrap:wrap;align-items:center}
 
@@ -67,7 +91,9 @@ h1 small{display:block;font-family:var(--f-body);font-size:12px;color:var(--mute
 .offers{display:grid;gap:6px}
 .offer{display:flex;justify-content:space-between;gap:10px;align-items:center;background:var(--plot-2);border-radius:8px;padding:8px 10px;font-size:14px;flex-wrap:wrap}
 .offer.no{color:var(--muted)}
+.offer .acts{display:flex;gap:6px}
 .offer button{padding:6px 12px}
+.askbox{background:var(--plot-2);border-radius:10px;padding:10px 12px;display:grid;gap:8px;font-size:14px}
 aside.logbox{background:var(--plot);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;grid-template-rows:auto 1fr;gap:8px;max-height:430px;min-width:0}
 #log{list-style:none;margin:0;padding:0;overflow-y:auto;font-size:13px;line-height:1.45;color:var(--muted);display:grid;gap:4px;align-content:start}
 #log li:first-child{color:var(--sprout)}
@@ -93,7 +119,7 @@ details.rules ol{padding-left:18px;margin:6px 0}
 .fmeta{font-size:12px;color:var(--muted)}
 .fmeta b{color:var(--sprout);font-family:var(--f-mono)}
 .field button{padding:5px 12px;font-size:13px}
-.rowlabel{display:flex;gap:10px;align-items:baseline}
+.rowlabel{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
 .hand{display:flex;gap:8px;overflow-x:auto;padding:12px 4px 8px;min-height:140px}
 
 /* bean cards */
@@ -113,75 +139,117 @@ details.rules ol{padding-left:18px;margin:6px 0}
 .nexttag{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--good);color:var(--ink);font-size:10px;font-weight:800;padding:1px 6px;border-radius:999px;white-space:nowrap;text-transform:uppercase;letter-spacing:.06em}
 .stack .card{box-shadow:3px 3px 0 -1px var(--stock),3px 3px 0 0 rgba(0,0,0,.3),6px 6px 0 -1px var(--stock),6px 6px 0 0 rgba(0,0,0,.3)}
 
-/* end */
+/* overlays */
 #over{position:fixed;inset:0;background:rgba(10,14,9,.78);display:grid;place-items:center;padding:16px;z-index:5}
 .overbox{background:var(--plot);border:1px solid var(--marigold);border-radius:16px;padding:24px;max-width:420px;width:100%;display:grid;gap:14px}
 .overbox h2{font-family:var(--f-display);font-weight:400;color:var(--marigold);font-size:34px;margin:0;line-height:1.1}
 .rank{display:grid;gap:6px}
 .rank div{display:flex;justify-content:space-between;background:var(--plot-2);border-radius:8px;padding:8px 12px}
 .rank div:first-child{outline:1px solid var(--marigold)}
+#banner{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--warn);color:var(--ink);display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;font-weight:700;z-index:6}
+#banner button{background:var(--ink);color:var(--sprout)}
 
-@media (max-width:900px){.mid{grid-template-columns:1fr} aside.logbox{max-height:240px}}
-@media (max-width:700px){#opps{grid-template-columns:1fr}.field{width:calc(50% - 6px);min-width:0}}
+@media (max-width:900px){.mid{grid-template-columns:1fr} aside.logbox{max-height:240px}.setup-grid{grid-template-columns:1fr}}
+@media (max-width:700px){.field{width:calc(50% - 6px);min-width:0}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
 <div class="wrap">
   <header>
-    <h1>Bean Barter<small>A bean-farming trading game · you vs. three rivals</small></h1>
-    <div class="stats">
+    <h1>Bean Barter<small>A bean-farming trading game for 3 to 5 players</small></h1>
+    <div class="stats" id="stats" hidden>
       <div class="stat"><span class="label">Deck</span><b id="deck">0</b></div>
       <div class="stat"><span class="label">Discard</span><b id="disc">0</b></div>
       <div class="stat"><span class="label">Top discard</span><b id="disctop" class="disctop">–</b></div>
       <div class="stat"><span class="label">Deck pass</span><b><span id="pass">1</span>/3</b></div>
     </div>
-    <div class="controls">
-      <label for="speed">Rival speed
+    <div class="controls" id="controls" hidden>
+      <label for="speed" id="speedwrap">AI speed
         <select id="speed"><option value="1100">Slow</option><option value="600" selected>Normal</option><option value="200">Fast</option></select>
       </label>
-      <label for="autopass"><input type="checkbox" id="autopass"> Skip my trade window on rivals' turns</label>
-      <button class="ghost" data-act="new">New game</button>
+      <label for="autopass"><input type="checkbox" id="autopass"> Skip my trade window on AI turns</label>
+      <button class="ghost" data-act="leave" id="leavebtn">Leave game</button>
     </div>
   </header>
 
-  <section id="opps" aria-label="Rivals"></section>
-
-  <div class="mid">
-    <section class="market" id="market" aria-live="polite"></section>
-    <aside class="logbox">
-      <span class="label">Table talk</span>
-      <ul id="log"></ul>
-    </aside>
-  </div>
-
-  <section class="you" id="you">
-    <div class="you-top">
-      <h2>Your farm</h2>
-      <div class="coins"><span class="coin"></span><span><b class="num" id="mycoins">0</b> coins</span></div>
+  <section id="setup" class="setup">
+    <div class="setup-intro">
+      <p>Plant, trade and harvest beans. Play with friends on your own devices, against AI rivals, or both.</p>
+      <label class="label" for="myname">Your name</label>
+      <input id="myname" maxlength="16" placeholder="Your name" autocomplete="nickname">
     </div>
-    <div id="myfields"></div>
-    <div id="mypendwrap"></div>
-    <div>
-      <div class="rowlabel"><span class="label">Your hand</span><span class="fmeta">Kept in the order you drew it. Planting always takes the card on the left.</span></div>
-      <div class="hand" id="myhand"></div>
+    <div class="setup-grid">
+      <article class="panel">
+        <h3>Play against AI</h3>
+        <p>Just you and computer rivals, on this device.</p>
+        <div class="field-row">
+          <label class="label" for="solobots">AI rivals</label>
+          <select id="solobots"><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option></select>
+        </div>
+        <div><button data-act="solo">Start game</button></div>
+      </article>
+      <article class="panel">
+        <h3>Host an online game</h3>
+        <p>You get a room code to send to friends. Everyone plays on their own phone or computer. Fill any empty seats with AI.</p>
+        <div><button data-act="host">Create room</button></div>
+      </article>
+      <article class="panel">
+        <h3>Join a game</h3>
+        <p>Enter the room code your host sent you.</p>
+        <div class="field-row">
+          <label class="label" for="joincode">Room code</label>
+          <input id="joincode" maxlength="5" autocomplete="off" spellcheck="false">
+        </div>
+        <div><button data-act="join">Join game</button></div>
+      </article>
     </div>
+    <p class="msg" id="setupmsg"></p>
   </section>
+
+  <section id="lobby" class="lobby" hidden></section>
+
+  <div id="game" hidden>
+    <div style="display:grid;gap:14px">
+      <section id="opps" aria-label="Other players"></section>
+      <div class="mid">
+        <section class="market" id="market" aria-live="polite"></section>
+        <aside class="logbox">
+          <span class="label">Table talk</span>
+          <ul id="log"></ul>
+        </aside>
+      </div>
+      <section class="you" id="you">
+        <div class="you-top">
+          <h2 id="myname-h">Your farm</h2>
+          <div class="coins"><span class="coin"></span><span><b class="num" id="mycoins">0</b> coins</span></div>
+        </div>
+        <div id="myfields"></div>
+        <div id="mypendwrap"></div>
+        <div>
+          <div class="rowlabel"><span class="label">Your hand</span><span class="fmeta">Kept in the order you drew it. Planting always takes the card on the left.</span></div>
+          <div class="hand" id="myhand"></div>
+        </div>
+      </section>
+    </div>
+  </div>
 
   <details class="rules">
     <summary>How a turn works</summary>
     <ol>
       <li><b>Must plant, may plant.</b> Plant the first card of your hand into a field. You may plant the next one too.</li>
       <li><b>Turn up two.</b> Two cards from the deck go into the market.</li>
-      <li><b>Trade.</b> Offer market cards or any cards from your hand, in any order. Only the active player trades: rivals can't trade with each other on your turn, and on a rival's turn you can trade with them. Cards you receive can't be traded again, and gifts must be accepted.</li>
-      <li><b>Plant trades.</b> Every card you kept or received must be planted.</li>
+      <li><b>Trade.</b> Offer market cards or any cards from your hand, in any order. Only the active player trades: other players can't trade with each other, but anyone can trade with the active player. Cards you receive can't be traded again, and gifts must be accepted.</li>
+      <li><b>Plant trades.</b> Everyone plants every card they received. The active player also plants whatever is left in the market.</li>
       <li><b>Draw three</b> to the back of your hand.</li>
     </ol>
-    A field holds one bean type. To plant a different type you have to harvest it first. The numbers on each card show how many beans earn 1, 2, 3 or 4 coins. You can harvest at any time, even on someone else's turn, but not a field holding a single bean while another field has more. When the last card is drawn, the discards are reshuffled into a new deck. When the deck runs out for the third time the game ends: if that happens while turning cards up, the turn finishes trading and planting first. Every field is then harvested, and cards in hand don't count. Most coins wins; ties go to the player seated furthest from the starting player (you start, so Juno wins ties, then Otto, then Mira).
+    A field holds one bean type. To plant a different type you have to harvest it first. The numbers on each card show how many beans earn 1, 2, 3 or 4 coins. Everyone has two fields, or three in a 3-player game. You can harvest at any time, even on someone else's turn, but not a field holding a single bean while another field has more. When the last card is drawn, the discards are reshuffled into a new deck. When the deck runs out for the third time the game ends: if that happens while turning cards up, the turn finishes trading and planting first. Every field is then harvested, and cards in hand don't count. Most coins wins; ties go to the player seated furthest from the starting player.
   </details>
 </div>
 
+<div id="banner" hidden></div>
 <div id="over" hidden></div>
 
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script>
 const TYPES = {
   blue:    {name:'Blue',       count:20, meter:[4,6,8,10],    c:'#3e70b8'},
@@ -194,31 +262,58 @@ const TYPES = {
   garden:  {name:'Garden',     count:6,  meter:[null,2,3,null],c:'#8cc56f'},
 };
 const ORDER = Object.keys(TYPES);
-const BOTS = ['Mira','Otto','Juno'];
+const BOT_NAMES = ['Mira','Otto','Juno','Pip'];
+const MIN_PLAYERS = 3, MAX_PLAYERS = 5;
+const PEER_PREFIX = 'beanbarter-';
 const $ = s => document.querySelector(s);
-let S, speed = 600, autoPass = false;
+
+/* S: full game state, only on the host. V: what this device may see (its own view). */
+let S = null, V = null, L = null, LV = null;
+let HOST = false, ONLINE = false, peer = null, hostConn = null, CONNS = [];
+let waiter = null, speed = 600, autoPass = false, lastSeq = -1, overDismissed = false, leaveArmed = false;
+let myName = '', roomCode = '';
+const U = { sel:{face:[],hand:[]}, want:'none', qty:1, pendSel:0, msg:'', passedKey:'' };
+function resetSel(){ U.sel={face:[],hand:[]}; U.want='none'; U.qty=1; U.msg=''; }
 
 const nm = t => TYPES[t].name;
 function coinsFor(t,n){ let c=0; TYPES[t].meter.forEach((v,i)=>{ if(v!=null && n>=v) c=i+1; }); return c; }
 const rar = t => coinsFor(t,4)*0.25;
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.random()*(i+1)|0; [a[i],a[j]]=[a[j],a[i]]; } return a; }
 function group(types){ const m={}; types.forEach(t=>m[t]=(m[t]||0)+1); return Object.entries(m).map(([t,n])=>(n>1?n+'× ':'')+nm(t)).join(', '); }
-const me = () => S.players[0];
+const esc = s => String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const wait = () => new Promise(r=>setTimeout(r, speed));
-function log(s){ S.log.unshift(s); if(S.log.length>80) S.log.pop(); }
-function note(s){ S.note=s; log(s); }
-function mkPlayer(name,human){ return {name,human,hand:[],fields:[{t:null,n:0},{t:null,n:0}],coins:0,pending:[]}; }
-function clearSel(){ S.sel={face:new Set(),hand:new Set()}; S.offers=null; }
+function cleanIdx(a,n){ return [...new Set((Array.isArray(a)?a:[]).map(x=>x|0))].filter(i=>i>=0 && i<n); }
+const validWant = (w,allowAny) => (TYPES[w] || (allowAny && w==='any')) ? w : 'none';
 
-function newGame(){
+/* ---------- engine (host only) ---------- */
+function log(s){ S.log.unshift(s); if(S.log.length>100) S.log.pop(); }
+function note(s){ S.note=s; log(s); }
+function mkPlayer(name,kind,nf){ return {name,kind,connected:true,hand:[],fields:Array.from({length:nf},()=>({t:null,n:0})),coins:0,pending:[]}; }
+const humans = () => S.players.map((p,i)=>({p,i})).filter(x=>x.p.kind==='human');
+const allPassed = () => humans().every(({p,i})=>!p.connected || S.passed.includes(i));
+const allPlanted = () => humans().every(({p})=>!p.connected || !p.pending.length);
+
+function startGame(seats){
+  const nf = seats.length===3 ? 3 : 2;
   S = { id:Math.random(), deck:shuffle(ORDER.flatMap(t=>Array(TYPES[t].count).fill(t))), discard:[], runOuts:0, ending:false,
-        players:[mkPlayer('You',true), ...BOTS.map(n=>mkPlayer(n,false))], cur:0, phase:'plant', planted:0,
-        faceUp:[], log:[], want:'none', qty:1, offers:null, reply:'', pendSel:0, msg:'', note:'', over:false, resume:null };
-  clearSel();
+        players:seats.map(s=>mkPlayer(s.name,s.kind,nf)), cur:0, phase:'plant', planted:0, faceUp:[], log:[],
+        ask:null, proposals:[], passed:[], replies:{}, note:'', over:false, result:null, tradeSeq:0, pid:0 };
+  waiter=null; overDismissed=false;
   for(let r=0;r<5;r++) S.players.forEach(p=>p.hand.push(S.deck.pop()));
-  log('New game. 104 bean cards shuffled, five cards each. You are the starting player.');
-  startHumanTurn();
+  log(`New game: ${S.players.map(p=>p.name).join(', ')}. ${S.players[0].name} is the starting player.${nf===3?' Three players, so everyone has three fields.':''}`);
+  startTurn(0);
 }
+function startTurn(seat){
+  S.cur=seat; S.phase='plant'; S.planted=0; S.faceUp=[]; S.ask=null; S.proposals=[]; S.passed=[]; S.replies={};
+  const p=S.players[seat];
+  if(p.kind==='bot'){ runBot(seat); return; }
+  S.note = p.hand.length ? '' : `${p.name}'s hand is empty, so planting is skipped.`;
+  sync();
+}
+function nextTurn(){ startTurn((S.cur+1)%S.players.length); }
+function runBot(seat){ const id=S.id; sync(); botTurn(S.players[seat]).then(()=>{ if(S && S.id===id && !S.over) nextTurn(); }); }
+function waitUntil(pred){ if(pred()) return Promise.resolve(); return new Promise(r=>{ waiter={pred,r}; }); }
+function checkWait(){ if(waiter && waiter.pred()){ const r=waiter.r; waiter=null; r(); } }
 
 // The deck "runs out" the moment its last card is drawn; the discards become the new deck right away.
 function runOut(){
@@ -239,16 +334,16 @@ function drawThree(p){ for(let k=0;k<3 && !S.ending;k++){ const c=draw(); if(c!=
 // Phase 2: turn up two (only one if the deck runs out for the last time); the turn still finishes phases 2 and 3.
 function turnUpTwo(){ for(let k=0;k<2 && !S.ending;k++){ const c=draw(); if(c!=null) S.faceUp.push(c); } }
 
-function canHarvest(p,i){ const f=p.fields[i]; return f.n>0 && !(f.n===1 && p.fields.some(o=>o.n>1)); }
+function canHarvest(p,i){ const f=p.fields[i]; return !!f && f.n>0 && !(f.n===1 && p.fields.some(o=>o.n>1)); }
 function harvest(p,i){
   const f=p.fields[i]; if(!f.n) return 0;
   const c=coinsFor(f.t,f.n); p.coins+=c;
   for(let k=0;k<f.n-c;k++) S.discard.push(f.t);
-  log(`${p.human?'You':p.name} harvested ${f.n} ${nm(f.t)} for ${c} coin${c===1?'':'s'}.`);
+  log(`${p.name} harvested ${f.n} ${nm(f.t)} for ${c} coin${c===1?'':'s'}.`);
   f.t=null; f.n=0; return c;
 }
 
-/* ---------- rival brains ---------- */
+/* ---------- AI ---------- */
 function simEval(p,base,inc){
   const fs=p.fields.map(f=>({t:f.t,n:f.n})); let score=0;
   const place=(t,count)=>{
@@ -284,80 +379,32 @@ function botPlantAll(p){
   while(p.pending.length) botPlace(p,p.pending.shift());
 }
 const spareIdx = (b,t,q) => b.hand.map((x,i)=>x===t?i:-1).filter(i=>i>=0).sort((x,y)=>handLoss(b,x)-handLoss(b,y)).slice(0,q);
+const firstIdx = (hand,t,q) => hand.map((x,i)=>x===t?i:-1).filter(i=>i>=0).slice(0,q);
 
-/* ---------- turn flow ---------- */
-function startHumanTurn(){
-  S.cur=0; S.phase='plant'; S.planted=0; S.msg=''; S.reply=''; clearSel();
-  S.note = me().hand.length ? '' : 'Your hand is empty, so you skip planting.';
-  render();
-}
-function plantType(){
-  const p=me();
-  if(S.over) return null;
-  if(S.cur===0 && S.phase==='plant' && S.planted<2 && p.hand.length) return p.hand[0];
-  if(S.phase==='humanPlant' && p.pending.length) return p.pending[Math.min(S.pendSel,p.pending.length-1)];
-  return null;
-}
-function clickField(i){
-  const p=me(), t=plantType(); if(!t) return;
-  const f=p.fields[i];
-  if(f.n && f.t!==t){ S.msg=`That field is growing ${nm(f.t)} beans. Harvest it first, or choose another field.`; render(); return; }
-  f.t=t; f.n++; S.msg='';
-  if(S.phase==='plant'){ p.hand.shift(); S.planted++; log(`You planted ${nm(t)}.`); }
-  else {
-    p.pending.splice(Math.min(S.pendSel,p.pending.length-1),1); S.pendSel=0; log(`You planted ${nm(t)}.`);
-    if(!p.pending.length && S.cur!==0) resume();
+async function botTurn(b){
+  const id=S.id, alive=()=>S && S.id===id && !S.over;
+  if(S.phase==='plant'){
+    if(S.planted===0 && b.hand.length){ const t=b.hand.shift(); botPlace(b,t); S.planted=1; note(`${b.name} planted ${nm(t)}.`); sync(); await wait(); if(!alive()) return; }
+    if(S.planted<2 && b.hand.length && b.fields.some(f=>f.t===b.hand[0] || !f.n)){ const t=b.hand.shift(); botPlace(b,t); S.planted=2; note(`${b.name} also planted ${nm(t)}.`); sync(); await wait(); if(!alive()) return; }
+    turnUpTwo(); S.phase='trade'; S.passed=[];
+    note(S.faceUp.length?`${b.name} turned up ${S.faceUp.map(nm).join(' and ')}.`:`${b.name} had no cards left to turn up.`);
+    sync();
   }
-  render();
-}
-function resume(){ if(S.resume){ const r=S.resume; S.resume=null; r(); } }
-function humanFlip(){
-  turnUpTwo();
-  S.phase='trade'; clearSel(); S.msg='';
-  note(S.faceUp.length?`You turned up ${S.faceUp.map(nm).join(' and ')}.`:'There were no cards left to turn up.');
-  render();
-}
-function endTrading(ai){
-  const a=S.players[ai]; a.pending.push(...S.faceUp); S.faceUp=[];
-  S.players.forEach(p=>{ if(!p.human) botPlantAll(p); });
-  clearSel(); S.want='none';
-}
-function humanEndTrading(){ endTrading(0); S.phase='humanPlant'; S.pendSel=0; S.note=''; render(); }
-function humanEndTurn(){
-  if(S.ending){ endGame(); render(); return; }
-  drawThree(me()); if(S.over){ render(); return; }
-  log('You drew three cards.');
-  S.cur=1; runBots();
-}
-async function runBots(){
-  const id=S.id;
-  while(S.cur!==0){
-    await botTurn(S.players[S.cur], id);
-    if(id!==S.id || S.over) return;
-    S.cur=(S.cur+1)%4;
+  if(S.phase==='trade'){
+    await wait(); if(!alive()) return;
+    await waitUntil(allPassed); if(!alive()) return;
+    botBotTrades(b); sync(); await wait(); if(!alive()) return;
+    endTrading(S.cur); S.phase='plant3'; note(`${b.name} planted everything from the market.`); sync();
   }
-  startHumanTurn();
-}
-async function botTurn(b,id){
-  const alive=()=>id===S.id && !S.over;
-  S.phase='bot'; clearSel(); S.reply=''; S.msg=''; S.want='none';
-  if(b.hand.length){ const t=b.hand.shift(); botPlace(b,t); note(`${b.name} planted ${nm(t)}.`); render(); await wait(); if(!alive()) return; }
-  if(b.hand.length && b.fields.some(f=>f.t===b.hand[0] || !f.n)){ const t=b.hand.shift(); botPlace(b,t); note(`${b.name} also planted ${nm(t)}.`); render(); await wait(); if(!alive()) return; }
-  turnUpTwo();
-  note(S.faceUp.length?`${b.name} turned up ${S.faceUp.map(nm).join(' and ')}.`:`${b.name} had no cards left to turn up.`);
-  S.phase='botTrade'; render();
-  if(autoPass) await wait(); else await new Promise(r=>S.resume=r);
-  if(!alive()) return;
-  S.phase='bot'; S.reply='';
-  botBotTrades(b); render(); await wait(); if(!alive()) return;
-  endTrading(S.cur); note(`${b.name} planted everything from the market.`); render();
-  if(me().pending.length){ S.phase='humanPlant'; S.pendSel=0; render(); await new Promise(r=>S.resume=r); if(!alive()) return; }
-  if(S.ending){ endGame(); render(); return; }
-  S.phase='bot'; drawThree(b); if(S.over){ render(); return; }
-  note(`${b.name} drew three cards.`); render(); await wait();
+  if(S.phase==='plant3'){
+    await waitUntil(allPlanted); if(!alive()) return;
+    if(S.ending){ endGame(); return; }
+    drawThree(b); if(S.over) return;
+    note(`${b.name} drew three cards.`); sync(); await wait();
+  }
 }
 function botBotTrades(b){
-  const others=S.players.filter(p=>!p.human && p!==b);
+  const others=S.players.filter(p=>p.kind==='bot' && p!==b);
   for(let k=S.faceUp.length-1;k>=0;k--){
     const c=S.faceUp[k], rest=S.faceUp.filter((_,j)=>j!==k);
     if(simEval(b,b.pending,S.faceUp)-simEval(b,b.pending,rest) > 0.5) continue;
@@ -376,80 +423,189 @@ function botBotTrades(b){
   }
 }
 
-/* ---------- trading with you ---------- */
-function myGive(){ const p=me(); return [...[...S.sel.face].map(i=>S.faceUp[i]), ...[...S.sel.hand].map(i=>p.hand[i])]; }
-function askTable(){
-  const give=myGive();
-  if(!give.length && S.want==='none'){ S.msg='Pick cards to offer, or choose a bean to ask for.'; render(); return; }
-  S.msg=''; S.offers=[];
+/* ---------- trading ---------- */
+function endTrading(ai){
+  S.players[ai].pending.push(...S.faceUp); S.faceUp=[];
+  S.players.forEach(p=>{ if(p.kind==='bot') botPlantAll(p); });
+  S.ask=null; S.proposals=[]; S.tradeSeq++;
+}
+// a = active player (owns the market), b = trade partner.
+function doTrade(a,b,aFace,aHand,bHand){
+  const A=S.players[a], B=S.players[b];
+  const toB=[...aFace.map(i=>S.faceUp[i]), ...aHand.map(i=>A.hand[i])];
+  const toA=bHand.map(i=>B.hand[i]);
+  [...aFace].sort((x,y)=>y-x).forEach(i=>S.faceUp.splice(i,1));
+  [...aHand].sort((x,y)=>y-x).forEach(i=>A.hand.splice(i,1));
+  [...bHand].sort((x,y)=>y-x).forEach(i=>B.hand.splice(i,1));
+  B.pending.push(...toB); A.pending.push(...toA);
+  log(toB.length && toA.length ? `${A.name} traded ${group(toB)} to ${B.name} for ${group(toA)}.`
+    : toB.length ? `${A.name} gave ${B.name} ${group(toB)}.` : `${B.name} gave ${A.name} ${group(toA)}.`);
+  S.proposals.forEach(x=>{ if(x.from!==b) S.replies[x.from]='Your proposal was cleared because another trade went through. Send it again if you still want it.'; });
+  S.ask=null; S.proposals=[]; S.tradeSeq++;
+}
+function makeAsk(seat,p){
+  const P=S.players[seat];
+  const face=cleanIdx(p.face,S.faceUp.length), hand=cleanIdx(p.hand,P.hand.length);
+  const want=validWant(p.want,true), qty=Math.max(1,Math.min(3,p.qty|0||1));
+  const give=[...face.map(i=>S.faceUp[i]), ...hand.map(i=>P.hand[i])];
+  if(!give.length && want==='none'){ S.replies[seat]='Pick cards to offer, or choose a bean to ask for.'; return; }
+  S.replies[seat]='';
+  S.ask={id:++S.pid, from:seat, face, hand, giveTypes:give, want, qty, resp:{}};
   S.players.forEach((b,bi)=>{
-    if(b.human) return;
+    if(b.kind!=='bot') return;
     const gain=give.length?delta(b,give):0; let gives=[];
-    if(S.want==='any'){
+    if(want==='any'){
       gives=b.hand.map((_,i)=>i).filter(i=>handLoss(b,i)<0).sort((x,y)=>handLoss(b,x)-handLoss(b,y)).slice(0,Math.max(1,give.length));
-      if(!gives.length){ S.offers.push({bi,no:'has nothing to spare'}); return; }
-    } else if(S.want!=='none'){
-      gives=spareIdx(b,S.want,S.qty);
-      if(gives.length<S.qty){ S.offers.push({bi,no:`doesn't have ${S.qty>1?S.qty+' ':''}${nm(S.want)} to trade`}); return; }
+      if(!gives.length){ S.ask.resp[bi]={no:'has nothing to spare'}; return; }
+    } else if(want!=='none'){
+      gives=spareIdx(b,want,qty);
+      if(gives.length<qty){ S.ask.resp[bi]={no:`doesn't have ${qty>1?qty+' ':''}${nm(want)} to trade`}; return; }
     }
-    const net=gain-lossOf(b,gives);
-    if(net>=0.3) S.offers.push({bi,gives});
-    else S.offers.push({bi,no:'passes'});
+    S.ask.resp[bi] = gain-lossOf(b,gives)>=0.3 ? {gives, types:gives.map(i=>b.hand[i])} : {no:'passes'};
   });
-  render();
+  log(`${P.name} offers ${group(give)||'nothing'} for ${wantText(want,qty)}.`);
 }
-function takeOffer(k){
-  const o=S.offers[k], b=S.players[o.bi], p=me();
-  const given=[];
-  [...S.sel.face].sort((x,y)=>y-x).forEach(i=>given.push(S.faceUp.splice(i,1)[0]));
-  [...S.sel.hand].sort((x,y)=>y-x).forEach(i=>given.push(p.hand.splice(i,1)[0]));
-  const got=[...o.gives].sort((x,y)=>y-x).map(i=>b.hand.splice(i,1)[0]);
-  b.pending.push(...given); p.pending.push(...got);
-  log(got.length ? `You gave ${b.name} ${group(given)||'nothing'} for ${group(got)}.` : `You gave ${b.name} ${group(given)}.`);
-  clearSel(); S.want='none'; S.qty=1; render();
-}
-function proposeToActive(){
-  const b=S.players[S.cur], p=me();
-  const F=[...S.sel.face], H=[...S.sel.hand];
-  let W=[];
-  if(S.want!=='none'){
-    W=spareIdx(b,S.want,S.qty);
-    if(W.length<S.qty){ S.reply=`${b.name}: “I don't have ${S.qty>1?S.qty+' ':''}${nm(S.want)} to spare.”`; render(); return; }
+function wantText(want,qty){ return want==='none' ? 'nothing (a gift)' : want==='any' ? 'any spare bean' : `${qty>1?qty+'× ':''}${nm(want)}`; }
+function propose(seat,p){
+  const Q=S.players[seat], A=S.players[S.cur];
+  const face=cleanIdx(p.face,S.faceUp.length), hand=cleanIdx(p.hand,Q.hand.length);
+  const want=validWant(p.want,false), qty=Math.max(1,Math.min(3,p.qty|0||1));
+  if(!face.length && want==='none'){ S.replies[seat]='Pick a market card, or a bean to ask for from their hand.'; return; }
+  if(A.kind==='bot'){
+    let W=[];
+    if(want!=='none'){ W=spareIdx(A,want,qty); if(W.length<qty){ S.replies[seat]=`${A.name}: “I don't have ${qty>1?qty+' ':''}${nm(want)} to spare.”`; return; } }
+    const rest=S.faceUp.filter((_,j)=>!face.includes(j));
+    const net=simEval(A,A.pending,[...rest,...hand.map(i=>Q.hand[i])]) - lossOf(A,W) - simEval(A,A.pending,S.faceUp);
+    if(net>=0.3){ doTrade(S.cur,seat,face,W,hand); S.replies[seat]=`${A.name}: “Deal.”`; }
+    else {
+      const grows=[...new Set(A.fields.filter(f=>f.n).map(f=>nm(f.t)))];
+      S.replies[seat]=`${A.name}: “No thanks.”${grows.length?` They're growing ${grows.join(' and ')}.`:''}`;
+    }
+    return;
   }
-  if(!F.length && !W.length){ S.reply='Pick a market card, or a bean to ask for from their hand.'; render(); return; }
-  const rest=S.faceUp.filter((_,j)=>!F.includes(j));
-  const net=simEval(b,b.pending,[...rest,...H.map(i=>p.hand[i])]) - lossOf(b,W) - simEval(b,b.pending,S.faceUp);
-  if(net>=0.3){
-    const got=[...F.map(i=>S.faceUp[i])], given=H.map(i=>p.hand[i]);
-    F.sort((x,y)=>y-x).forEach(i=>S.faceUp.splice(i,1));
-    H.sort((x,y)=>y-x).forEach(i=>p.hand.splice(i,1));
-    W.sort((x,y)=>y-x).forEach(i=>got.push(b.hand.splice(i,1)[0]));
-    p.pending.push(...got); b.pending.push(...given);
-    S.reply=`${b.name}: “Deal.”`;
-    log(`You got ${group(got)} from ${b.name}${given.length?' for '+group(given):' as a gift'}.`);
-    clearSel(); S.want='none'; S.qty=1;
-  } else {
-    const wants=[...new Set(b.fields.filter(f=>f.n).map(f=>nm(f.t)))];
-    S.reply=`${b.name}: “No thanks.”${wants.length?` They're growing ${wants.join(' and ')}.`:''}`;
-  }
-  render();
+  S.proposals=S.proposals.filter(x=>x.from!==seat);
+  S.proposals.push({pid:++S.pid, from:seat, face, hand, want, qty, takeTypes:face.map(i=>S.faceUp[i]), giveTypes:hand.map(i=>Q.hand[i])});
+  S.replies[seat]=`Sent. Waiting for ${A.name} to answer.`;
 }
 
 function endGame(){
   if(S.over) return;
-  S.over=true; S.resume=null;
+  S.over=true; waiter=null;
   log('Game over. Every field is harvested.');
   S.players.forEach(p=>p.fields.forEach((f,i)=>{ if(f.n) harvest(p,i); }));
-  // Ties go to the tied player seated furthest clockwise from the starting player (you, seat 0).
-  const ranked=S.players.map((p,seat)=>({p,seat})).sort((a,b)=>b.p.coins-a.p.coins || b.seat-a.seat).map(x=>x.p);
-  const win=ranked[0];
-  $('#over').innerHTML=`<div class="overbox" role="dialog" aria-label="Final scores">
-    <span class="label">Harvest's in</span>
-    <h2>${win.human?'You win the market!':win.name+' wins'}</h2>
-    <div class="rank">${ranked.map(p=>`<div><span>${p.name}</span><span class="num">${p.coins} coin${p.coins===1?'':'s'}</span></div>`).join('')}</div>
-    <div class="trade-row"><button data-act="new">Play again</button><button class="ghost" data-act="closeover">See the table</button></div>
-  </div>`;
-  $('#over').hidden=false;
+  // Ties go to the tied player seated furthest clockwise from the starting player (seat 0).
+  S.result=S.players.map((p,seat)=>({name:p.name,coins:p.coins,seat})).sort((a,b)=>b.coins-a.coins || b.seat-a.seat);
+  sync();
+}
+
+/* ---------- actions from any human seat ---------- */
+function handleAction(seat,a,p){
+  p=p||{};
+  if(!S || S.over) return;
+  const P=S.players[seat]; if(!P || P.kind!=='human') return;
+  const active=S.cur===seat, A=S.players[S.cur];
+  switch(a){
+    case 'plant': {
+      const i=p.field|0, f=P.fields[i]; if(!f) break;
+      let t, from;
+      if(active && S.phase==='plant' && S.planted<2 && P.hand.length){ t=P.hand[0]; from='hand'; }
+      else if(P.pending.length && S.phase!=='trade'){ from=Math.max(0,Math.min(p.pend|0,P.pending.length-1)); t=P.pending[from]; }
+      else break;
+      if(f.n && f.t!==t){ S.replies[seat]=`That field is growing ${nm(f.t)}. Harvest it first, or choose another field.`; break; }
+      f.t=t; f.n++; S.replies[seat]='';
+      if(from==='hand'){ P.hand.shift(); S.planted++; } else P.pending.splice(from,1);
+      log(`${P.name} planted ${nm(t)}.`);
+      break;
+    }
+    case 'harvest': if(canHarvest(P,p.field|0)){ harvest(P,p.field|0); S.replies[seat]=''; } break;
+    case 'flip':
+      if(active && S.phase==='plant' && (S.planted>=1 || !P.hand.length)){
+        turnUpTwo(); S.phase='trade';
+        note(S.faceUp.length?`${P.name} turned up ${S.faceUp.map(nm).join(' and ')}.`:`${P.name} had no cards left to turn up.`);
+      }
+      break;
+    case 'ask': if(active && S.phase==='trade') makeAsk(seat,p); break;
+    case 'respond':
+      if(!active && S.phase==='trade' && S.ask && S.ask.id===p.id){
+        const h=p.pass?[]:cleanIdx(p.hand,P.hand.length);
+        S.ask.resp[seat]=h.length?{gives:h,types:h.map(i=>P.hand[i])}:{no:'passes'};
+      }
+      break;
+    case 'take':
+      if(active && S.phase==='trade' && S.ask){
+        const r=S.ask.resp[p.seat|0];
+        if(r && r.gives) doTrade(seat,p.seat|0,S.ask.face,S.ask.hand,r.gives);
+      }
+      break;
+    case 'propose': if(!active && S.phase==='trade') propose(seat,p); break;
+    case 'answer':
+      if(active && S.phase==='trade'){
+        const k=S.proposals.findIndex(x=>x.pid===p.pid); if(k<0) break;
+        const pr=S.proposals[k];
+        if(p.accept){
+          const W=pr.want!=='none'?firstIdx(P.hand,pr.want,pr.qty):[];
+          if(pr.want!=='none' && W.length<pr.qty){ S.replies[seat]=`You don't have ${pr.qty>1?pr.qty+' ':''}${nm(pr.want)} to give.`; break; }
+          const from=pr.from;
+          doTrade(seat,from,pr.face,W,pr.hand);
+          S.replies[from]=`${P.name} accepted your trade.`;
+        } else { S.proposals.splice(k,1); S.replies[pr.from]=`${P.name} declined your trade.`; }
+      }
+      break;
+    case 'endtrade':
+      if(active && S.phase==='trade'){ endTrading(seat); S.phase='plant3'; note(`${P.name} ended trading. Everyone plants their new beans.`); }
+      break;
+    case 'pass': if(!active && S.phase==='trade' && A.kind==='bot' && !S.passed.includes(seat)) S.passed.push(seat); break;
+    case 'endturn':
+      if(active && S.phase==='plant3' && allPlanted()){
+        if(S.ending){ endGame(); return; }
+        drawThree(P); if(S.over) return;
+        log(`${P.name} drew three cards.`);
+        nextTurn(); return;
+      }
+      break;
+  }
+  sync();
+}
+// Host hands a disconnected player's seat to the AI.
+function takeOver(seat){
+  const p=S.players[seat]; if(!p || p.kind!=='human' || p.connected) return;
+  p.kind='bot'; p.connected=true; CONNS[seat]=null;
+  log(`AI is now playing for ${p.name}.`);
+  if(S.phase!=='trade') botPlantAll(p);
+  if(S.cur===seat){ if(S.phase==='trade') S.passed=[]; runBot(seat); }
+  else sync();
+}
+
+/* ---------- views ---------- */
+function viewFor(seat){
+  return { you:seat, deckN:S.deck.length, discN:S.discard.length, discTop:S.discard[S.discard.length-1]||null,
+    runOuts:S.runOuts, ending:S.ending, cur:S.cur, phase:S.phase, planted:S.planted, faceUp:S.faceUp, log:S.log,
+    players:S.players.map((p,i)=>({name:p.name, kind:p.kind, connected:p.connected, coins:p.coins, fields:p.fields, pending:p.pending,
+      hand: i===seat ? p.hand : Array(p.hand.length).fill(null)})),
+    ask:S.ask, proposals:S.proposals, passed:S.passed, reply:S.replies[seat]||'', note:S.note, over:S.over, result:S.result,
+    tradeSeq:S.tradeSeq, online:ONLINE, allPlanted:allPlanted() };
+}
+function sync(){
+  if(!S) return;
+  checkWait();
+  CONNS.forEach((c,i)=>{ if(c && c.open && S.players[i] && S.players[i].kind==='human'){ try{ c.send({type:'state', view:viewFor(i)}); }catch(e){} } });
+  receiveView(viewFor(0));
+}
+function receiveView(view){
+  V=view;
+  if(V.tradeSeq!==lastSeq){ lastSeq=V.tradeSeq; resetSel(); }
+  if(!V.over) overDismissed=false;
+  showScreen('game'); render(); afterRender();
+}
+
+/* ---------- this device's input ---------- */
+function act(a,p){ if(HOST) handleAction(0,a,p); else if(hostConn && hostConn.open) hostConn.send({type:'act',a,p}); }
+function afterRender(){
+  if(!V || V.over) return;
+  const cur=V.players[V.cur];
+  if(autoPass && V.phase==='trade' && V.cur!==V.you && cur.kind==='bot' && !V.passed.includes(V.you) && U.passedKey!==V.cur+'@'+V.deckN){
+    U.passedKey=V.cur+'@'+V.deckN; act('pass');
+  }
 }
 
 /* ---------- rendering ---------- */
@@ -462,139 +618,393 @@ function card(t,{cls='',act='',i='',tag=''}={}){
   </div>`;
 }
 const tag = t => `<span class="tag"><span class="chip" style="--bean:${TYPES[t].c}"></span>${nm(t)}</span>`;
+const tags = ts => ts.length ? ts.map(tag).join('') : '<span class="fmeta">nothing</span>';
+const meP = () => V.players[V.you];
+const seatBadge = p => p.kind==='bot' ? '<span class="badge ai">AI</span>' : (!p.connected ? '<span class="badge off">Offline</span>' : '');
+
 function oppHTML(b,bi){
   const minis=b.fields.map(f=>f.n?`<div class="mini"><span class="chip" style="--bean:${TYPES[f.t].c}"></span>${nm(f.t)} <b class="num">×${f.n}</b></div>`:`<div class="mini empty">empty field</div>`).join('');
-  return `<article class="opp ${S.cur===bi&&!S.over?'active':''}">
-    <div class="opp-top"><span class="opp-name">${b.name}</span><span class="opp-meta"><span><b class="num">${b.coins}</b> coins</span></span></div>
+  const waitingOn = V.phase==='trade' && V.players[V.cur].kind==='bot' && b.kind==='human' && b.connected && bi!==V.cur && !V.passed.includes(bi);
+  return `<article class="opp ${V.cur===bi&&!V.over?'active':''}">
+    <div class="opp-top"><span class="opp-name">${esc(b.name)} ${seatBadge(b)}</span><span class="opp-meta"><span><b class="num">${b.coins}</b> coins</span></span></div>
     <div class="minis">${minis}</div>
     <div class="pend-row"><span>Hand</span><span class="backs">${Array.from({length:Math.min(b.hand.length,14)},()=>'<span class="back"></span>').join('')}</span><span class="num">${b.hand.length}</span></div>
     ${b.pending.length?`<div class="pend-row"><span>To plant:</span>${b.pending.map(tag).join('')}</div>`:''}
+    ${waitingOn?'<div class="pend-row">Still trading…</div>':''}
+    ${HOST && b.kind==='human' && !b.connected && !V.over?`<div><button class="small ghost" data-act="takeover" data-i="${bi}">Let AI play for ${esc(b.name)}</button></div>`:''}
   </article>`;
 }
-function wantSelect(fromName){
-  const opts=[`<option value="none">${fromName?'Nothing from their hand':'Nothing (a gift)'}</option>`];
-  if(!fromName) opts.push(`<option value="any">Any bean they can spare</option>`);
+function wantSelect(fromHand){
+  const opts=[`<option value="none">${fromHand?'Nothing from their hand':'Nothing (a gift)'}</option>`];
+  if(!fromHand) opts.push(`<option value="any">Any bean they can spare</option>`);
   ORDER.forEach(t=>opts.push(`<option value="${t}">${nm(t)}</option>`));
-  return `<label class="label" for="want">${fromName?'Also ask for':'In return'}</label>
-    <select id="want">${opts.join('').replace(`value="${S.want}"`,`value="${S.want}" selected`)}</select>
-    ${S.want!=='none'&&S.want!=='any'?`<select id="qty" aria-label="How many">${[1,2,3].map(n=>`<option value="${n}" ${S.qty===n?'selected':''}>${n}</option>`).join('')}</select>`:''}`;
+  return `<label class="label" for="want">${fromHand?'Also ask for':'In return'}</label>
+    <select id="want">${opts.join('').replace(`value="${U.want}"`,`value="${U.want}" selected`)}</select>
+    ${TYPES[U.want]?`<select id="qty" aria-label="How many">${[1,2,3].map(n=>`<option value="${n}" ${U.qty===n?'selected':''}>${n}</option>`).join('')}</select>`:''}`;
+}
+function faceRow(selectable,interest){
+  if(!V.faceUp.length) return '<div class="faceup"><span class="fmeta">The market is empty.</span></div>';
+  return `<div class="faceup">${V.faceUp.map((t,i)=>{
+    const keen=interest?V.players.filter((b,bi)=>b.kind==='bot' && bi!==V.cur && delta(b,[t])>=1.5).map(b=>esc(b.name)):[];
+    return `<div class="fu">${card(t,selectable?{cls:'pick'+(U.sel.face.includes(i)?' sel':''),act:'face',i}:{})}${interest?`<span class="interest">${keen.length?keen.join(', ')+' interested':''}</span>`:''}</div>`;
+  }).join('')}</div>`;
 }
 function marketHTML(){
-  const p=me(), cur=S.players[S.cur], myTurn=S.cur===0;
+  const me=meP(), cur=V.players[V.cur], myTurn=V.cur===V.you, curName=esc(cur.name);
+  const selGive=[...U.sel.face.map(i=>V.faceUp[i]), ...U.sel.hand.map(i=>me.hand[i])];
+  const selHand=U.sel.hand.map(i=>me.hand[i]);
   let status='', body='';
-  if(S.over){ status='Game over.'; }
-  else if(myTurn && S.phase==='plant'){
-    if(!p.hand.length) status='Your hand is empty. Turn up two cards.';
-    else if(S.planted===0) status='<span class="who">Your turn.</span> Plant the first card of your hand: click a highlighted field.';
-    else if(S.planted===1) status='You may plant your next card too, or turn up two cards.';
-    else status='Two beans planted. Turn up two cards.';
-    body=`<div class="trade-row"><button data-act="flip" ${S.planted===0&&p.hand.length?'disabled':''}>Turn up two cards</button></div>`;
+  if(V.over){ status='Game over.'; }
+  else if(V.phase==='plant'){
+    if(myTurn){
+      if(!me.hand.length) status='<span class="who">Your turn.</span> Your hand is empty. Turn up two cards.';
+      else if(V.planted===0) status='<span class="who">Your turn.</span> Plant the first card of your hand: click a highlighted field.';
+      else if(V.planted===1) status='You may plant your next card too, or turn up two cards.';
+      else status='Two beans planted. Turn up two cards.';
+      body=`<div class="trade-row"><button data-act="flip" ${V.planted===0&&me.hand.length?'disabled':''}>Turn up two cards</button></div>`;
+    } else status=`<span class="who">${curName}'s turn.</span> ${esc(V.note||`${cur.name} is planting.`)}`;
   }
-  else if(myTurn && S.phase==='trade'){
+  else if(V.phase==='trade' && myTurn){
     status='<span class="who">Trade.</span> Click market cards or hand cards to offer them, then ask the table. Whatever stays in the market is yours to plant.';
-    const fu=S.faceUp.map((t,i)=>{
-      const keen=S.players.filter(b=>!b.human && delta(b,[t])>=1.5).map(b=>b.name);
-      return `<div class="fu">${card(t,{cls:'pick'+(S.sel.face.has(i)?' sel':''),act:'face',i})}<span class="interest">${keen.length?keen.join(', ')+' interested':''}</span></div>`;
-    }).join('');
-    const give=myGive();
-    body=`<div class="faceup">${fu||'<span class="fmeta">The market is empty.</span>'}</div>
+    let resp='';
+    if(V.ask){
+      resp=`<div class="offers"><span class="label">Answers to your offer of ${esc(group(V.ask.giveTypes)||'nothing')} for ${esc(wantText(V.ask.want,V.ask.qty))}</span>${V.players.map((b,bi)=>{
+        if(bi===V.you) return '';
+        const r=V.ask.resp[bi];
+        if(!r) return `<div class="offer no"><span>${esc(b.name)} is thinking…</span></div>`;
+        if(r.no) return `<div class="offer no"><span>${esc(b.name)} ${esc(r.no)}.</span></div>`;
+        return `<div class="offer"><span><b>${esc(b.name)}</b> gives you ${esc(group(r.types))}</span><button data-act="take" data-i="${bi}">Take deal</button></div>`;
+      }).join('')}</div>`;
+    }
+    const props=V.proposals.length?`<div class="offers"><span class="label">Offers to you</span>${V.proposals.map(pr=>{
+      const from=V.players[pr.from];
+      const wants=[...pr.takeTypes]; if(pr.want!=='none') wants.push(...Array(pr.qty).fill(pr.want));
+      return `<div class="offer"><span><b>${esc(from.name)}</b> wants ${esc(group(wants)||'nothing')} and gives ${esc(group(pr.giveTypes)||'nothing')}</span>
+        <span class="acts"><button data-act="accept" data-i="${pr.pid}">Accept</button><button class="ghost" data-act="decline" data-i="${pr.pid}">Decline</button></span></div>`;
+    }).join('')}</div>`:'';
+    body=`${faceRow(true,true)}
     <div class="trade">
-      <div class="trade-row"><span class="label">You offer</span><div class="give">${give.length?give.map(tag).join(''):'<span class="fmeta">nothing selected</span>'}</div></div>
-      <div class="trade-row">${wantSelect()}<button data-act="ask">Ask the table</button></div>
-      ${S.offers?`<div class="offers">${S.offers.map((o,k)=>{ const b=S.players[o.bi];
-        return o.no?`<div class="offer no"><span>${b.name} ${o.no}.</span></div>`
-        :`<div class="offer"><span><b>${b.name}</b> ${o.gives.length?'gives you '+group(o.gives.map(i=>b.hand[i])):'takes '+(give.length>1?'them':'it')+' for free'}</span><button data-act="take" data-i="${k}">Take deal</button></div>`; }).join('')}</div>`:''}
-      <div class="trade-row"><button class="ghost" data-act="endtrade">End trading and plant${S.faceUp.length?' the market':''}</button></div>
+      <div class="trade-row"><span class="label">You offer</span><div class="give">${selGive.length?selGive.map(tag).join(''):'<span class="fmeta">nothing selected</span>'}</div></div>
+      <div class="trade-row">${wantSelect(false)}<button data-act="ask">Ask the table</button></div>
+      ${resp}${props}
+      ${V.reply?`<div class="reply">${esc(V.reply)}</div>`:''}
+      <div class="trade-row"><button class="ghost" data-act="endtrade">End trading and plant${V.faceUp.length?' the market':''}</button></div>
     </div>`;
   }
-  else if(S.phase==='humanPlant'){
-    if(p.pending.length) status=`<span class="who">Plant your new beans.</span> Pick a card below, then click a field.${myTurn?'':` ${cur.name} is waiting.`}`;
-    else status='Everything is planted.';
-    body = myTurn && !p.pending.length ? `<div class="trade-row"><button data-act="endturn">${S.ending?'Finish the game':'Draw three and end turn'}</button></div>` : '';
-  }
-  else if(S.phase==='botTrade'){
-    const b=cur;
-    const wants=[...new Set(b.fields.filter(f=>f.n).map(f=>nm(f.t)))];
-    const unwanted=S.faceUp.filter((t,k)=>simEval(b,b.pending,S.faceUp)-simEval(b,b.pending,S.faceUp.filter((_,j)=>j!==k))<=0.5);
-    status=`<span class="who">${b.name}'s market is open.</span> Pick market cards you want and hand cards to offer, then propose.`;
-    const fu=S.faceUp.map((t,i)=>`<div class="fu">${card(t,{cls:'pick'+(S.sel.face.has(i)?' sel':''),act:'face',i})}</div>`).join('');
-    const give=[...S.sel.hand].map(i=>p.hand[i]);
-    body=`<div class="faceup">${fu||'<span class="fmeta">The market is empty.</span>'}</div>
-    <div class="fmeta">${b.name} is growing ${wants.length?wants.join(' and '):'nothing yet'}${unwanted.length?` and would part with ${group(unwanted)}`:''}.</div>
+  else if(V.phase==='trade'){
+    const isBot=cur.kind==='bot', passed=V.passed.includes(V.you);
+    status=`<span class="who">${curName}'s market is open.</span> Pick market cards you want and hand cards to give, then send a proposal.`;
+    let askBox='';
+    if(V.ask){
+      const mine=V.ask.resp[V.you];
+      askBox=`<div class="askbox"><span><b>${curName}</b> offers ${esc(group(V.ask.giveTypes)||'nothing')} for ${esc(wantText(V.ask.want,V.ask.qty))}.</span>
+        <span class="fmeta">${mine?(mine.gives?`You offered ${esc(group(mine.types))}.`:'You passed.'):'Select hand cards below to offer them.'}</span>
+        <div class="trade-row"><button data-act="respond" ${selHand.length?'':'disabled'}>Offer ${selHand.length?esc(group(selHand)):'selected cards'}</button><button class="ghost" data-act="respondpass">Pass</button></div></div>`;
+    }
+    let hint='';
+    if(isBot){
+      const grows=[...new Set(cur.fields.filter(f=>f.n).map(f=>nm(f.t)))];
+      const unwanted=V.faceUp.filter((t,k)=>simEval(cur,cur.pending,V.faceUp)-simEval(cur,cur.pending,V.faceUp.filter((_,j)=>j!==k))<=0.5);
+      hint=`<div class="fmeta">${curName} is growing ${grows.length?grows.join(' and '):'nothing yet'}${unwanted.length?` and would part with ${group(unwanted)}`:''}.</div>`;
+    }
+    body=`${faceRow(true,false)}${hint}${askBox}
     <div class="trade">
-      <div class="trade-row"><span class="label">You want</span><div class="give">${S.sel.face.size?[...S.sel.face].map(i=>tag(S.faceUp[i])).join(''):'<span class="fmeta">no market cards</span>'}</div></div>
-      <div class="trade-row"><span class="label">You give</span><div class="give">${give.length?give.map(tag).join(''):'<span class="fmeta">nothing (ask for a gift)</span>'}</div></div>
-      <div class="trade-row">${wantSelect(b.name)}<button data-act="propose">Propose to ${b.name}</button><button class="ghost" data-act="pass">Done, let ${b.name} continue</button></div>
-      ${S.reply?`<div class="reply">${S.reply}</div>`:''}
+      <div class="trade-row"><span class="label">You want</span><div class="give">${U.sel.face.length?U.sel.face.map(i=>tag(V.faceUp[i])).join(''):'<span class="fmeta">no market cards</span>'}</div></div>
+      <div class="trade-row"><span class="label">You give</span><div class="give">${selHand.length?selHand.map(tag).join(''):'<span class="fmeta">nothing (ask for a gift)</span>'}</div></div>
+      <div class="trade-row">${wantSelect(true)}<button data-act="propose">Propose to ${curName}</button>
+        ${isBot?`<button class="ghost" data-act="pass" ${passed?'disabled':''}>${passed?'Waiting for others':`Done, let ${curName} continue`}</button>`:''}</div>
+      ${V.reply?`<div class="reply">${esc(V.reply)}</div>`:''}
     </div>`;
   }
-  else {
-    status=`<span class="who">${cur.name}'s turn.</span> ${S.note||''}`;
-    body=`<div class="faceup">${S.faceUp.map(t=>card(t)).join('')}</div>`;
+  else if(V.phase==='plant3'){
+    const waitingFor=V.players.filter(p=>p.kind==='human'&&p.connected&&p.pending.length).map(p=>esc(p.name));
+    if(me.pending.length) status=`<span class="who">Plant your new beans.</span> Pick a card below, then click a field.`;
+    else if(myTurn) status = V.allPlanted ? (V.ending?'Everything is planted. The deck has run out, so this ends the game.':'Everything is planted. Draw three cards to end your turn.') : `Waiting for ${waitingFor.join(' and ')} to plant.`;
+    else status = waitingFor.length ? `Waiting for ${waitingFor.join(' and ')} to plant.` : `<span class="who">${curName}'s turn.</span> ${esc(V.note||'')}`;
+    body = myTurn && !me.pending.length ? `<div class="trade-row"><button data-act="endturn" ${V.allPlanted?'':'disabled'}>${V.ending?'Finish the game':'Draw three and end turn'}</button></div>` : '';
+    if(V.reply) body+=`<div class="reply">${esc(V.reply)}</div>`;
   }
-  return `<div class="status">${status}</div>${S.msg?`<div class="msg">${S.msg}</div>`:''}${body}`;
+  return `<div class="status">${status}</div>${U.msg?`<div class="msg">${esc(U.msg)}</div>`:''}${body}`;
+}
+function plantType(){
+  const p=meP();
+  if(V.over) return null;
+  if(V.cur===V.you && V.phase==='plant' && V.planted<2 && p.hand.length) return p.hand[0];
+  if(V.phase!=='trade' && p.pending.length) return p.pending[Math.min(U.pendSel,p.pending.length-1)];
+  return null;
 }
 function fieldHTML(f,i){
-  const p=me(), t=plantType(), ok=t && (!f.n || f.t===t);
+  const p=meP(), t=plantType(), ok=t && (!f.n || f.t===t);
   const c=f.n?coinsFor(f.t,f.n):0;
   return `<div class="field ${ok?'can':''} ${t&&!ok?'no':''}" data-act="field" data-i="${i}" ${ok?'role="button" tabindex="0"':''} aria-label="Field ${i+1}">
     <span class="label flabel">Field ${i+1}</span>
     ${f.n?`<div class="stack">${card(f.t)}<span class="count">${f.n}</span></div>
       <span class="fmeta">Worth <b>${c}</b> coin${c===1?'':'s'} now</span>
-      <button class="ghost" data-act="harvest" data-i="${i}" ${canHarvest(p,i)&&!S.over?'':'disabled'}>Harvest</button>`
+      <button class="ghost" data-act="harvest" data-i="${i}" ${canHarvest(p,i)&&!V.over?'':'disabled'}>Harvest</button>`
     :`<div class="empty">Empty</div>`}
   </div>`;
 }
 function render(){
-  if(!S) return;
-  const p=me();
-  $('#deck').textContent=S.deck.length; $('#disc').textContent=S.discard.length; $('#pass').textContent=Math.min(S.runOuts+1,3);
-  const top=S.discard[S.discard.length-1];
-  $('#disctop').innerHTML=top?`<span class="chip" style="--bean:${TYPES[top].c}"></span>${nm(top)}`:'–';
-  $('#opps').innerHTML=S.players.slice(1).map((b,k)=>oppHTML(b,k+1)).join('');
+  if(!V) return;
+  const p=meP();
+  $('#deck').textContent=V.deckN; $('#disc').textContent=V.discN; $('#pass').textContent=Math.min(V.runOuts+1,3);
+  $('#disctop').innerHTML=V.discTop?`<span class="chip" style="--bean:${TYPES[V.discTop].c}"></span>${nm(V.discTop)}`:'–';
+  $('#opps').innerHTML=V.players.map((b,i)=>i===V.you?'':oppHTML(b,i)).join('');
   $('#market').innerHTML=marketHTML();
-  $('#you').classList.toggle('active', S.cur===0 && !S.over);
+  $('#you').classList.toggle('active', V.cur===V.you && !V.over);
+  $('#myname-h').textContent = `${p.name}'s farm`;
   $('#mycoins').textContent=p.coins;
   $('#myfields').innerHTML=p.fields.map(fieldHTML).join('');
   $('#mypendwrap').innerHTML = p.pending.length ? `<div class="rowlabel"><span class="label">To plant</span><span class="fmeta">Pick one, then a field. All of these must be planted.</span></div>
-    <div class="hand">${p.pending.map((t,i)=>card(t,{cls:'pick'+(i===Math.min(S.pendSel,p.pending.length-1)&&S.phase==='humanPlant'?' sel':''),act:'pend',i})).join('')}</div>` : '';
-  const tradingHand = (S.cur===0 && S.phase==='trade') || S.phase==='botTrade';
+    <div class="hand">${p.pending.map((t,i)=>card(t,{cls:'pick'+(i===Math.min(U.pendSel,p.pending.length-1)&&V.phase!=='trade'?' sel':''),act:'pend',i})).join('')}</div>` : '';
+  const tradingHand = V.phase==='trade' && !V.over;
   $('#myhand').innerHTML = p.hand.length ? p.hand.map((t,i)=>{
-    const isNext = i===0 && S.cur===0 && S.phase==='plant' && S.planted<2;
-    return card(t,{cls:(tradingHand?'pick':'')+(S.sel.hand.has(i)?' sel':'')+(isNext?' next':''), act:tradingHand?'hand':'', i, tag:i===0?'plant next':''});
+    const isNext = i===0 && V.cur===V.you && V.phase==='plant' && V.planted<2;
+    return card(t,{cls:(tradingHand?'pick':'')+(U.sel.hand.includes(i)?' sel':'')+(isNext?' next':''), act:tradingHand?'hand':'', i, tag:i===0?'plant next':''});
   }).join('') : '<span class="fmeta">No cards in hand.</span>';
-  $('#log').innerHTML=S.log.map(l=>`<li>${l}</li>`).join('');
+  $('#log').innerHTML=V.log.map(l=>`<li>${esc(l)}</li>`).join('');
+  $('#speedwrap').hidden=!HOST;
+  if(V.over && V.result && !overDismissed){
+    const win=V.result[0];
+    $('#over').innerHTML=`<div class="overbox" role="dialog" aria-label="Final scores">
+      <span class="label">Harvest's in</span>
+      <h2>${win.seat===V.you?'You win the market!':esc(win.name)+' wins'}</h2>
+      <div class="rank">${V.result.map(r=>`<div><span>${esc(r.name)}${r.seat===V.you?' (you)':''}</span><span class="num">${r.coins} coin${r.coins===1?'':'s'}</span></div>`).join('')}</div>
+      <div class="trade-row">${HOST?'<button data-act="again">Play again</button>':'<span class="fmeta">The host can start another game.</span>'}<button class="ghost" data-act="closeover">See the table</button></div>
+    </div>`;
+    $('#over').hidden=false;
+  } else $('#over').hidden=true;
+}
+
+/* ---------- screens, lobby and networking ---------- */
+let SCREEN='';
+function showScreen(name){
+  if(SCREEN===name) return;
+  SCREEN=name;
+  $('#speedwrap').hidden=!HOST;
+  $('#setup').hidden = name!=='setup';
+  $('#lobby').hidden = name!=='lobby';
+  $('#game').hidden = name!=='game';
+  $('#stats').hidden = name!=='game';
+  $('#controls').hidden = name==='setup';
+  $('#leavebtn').textContent = 'Leave game'; leaveArmed=false;
+}
+function setupMsg(s){ $('#setupmsg').textContent=s; }
+function banner(s,withReconnect){
+  const b=$('#banner');
+  if(!s){ b.hidden=true; return; }
+  b.innerHTML=`<span>${esc(s)}</span>${withReconnect?'<button data-act="reconnect">Reconnect</button>':''}<button data-act="leave-now">Back to start</button>`;
+  b.hidden=false;
+}
+function getName(){
+  const n=($('#myname').value||'').trim().slice(0,16);
+  try{ if(n) localStorage.setItem('bb-name',n); }catch(e){}
+  return n;
+}
+const cleanName = n => String(n||'').replace(/\s+/g,' ').trim().slice(0,16) || 'Player';
+function uniqueName(n,taken){ let base=cleanName(n), out=base, k=2; while(taken.includes(out)) out=`${base} ${k++}`; return out; }
+function genCode(){ const a='ABCDEFGHJKMNPQRSTUVWXYZ23456789'; return Array.from({length:5},()=>a[Math.random()*a.length|0]).join(''); }
+function botNames(n,taken){ const out=[]; for(const b of BOT_NAMES){ if(out.length>=n) break; if(!taken.includes(b)) out.push(b); } let k=1; while(out.length<n) out.push('Bot '+(k++)); return out; }
+
+function teardown(){
+  try{ peer && peer.destroy(); }catch(e){}
+  peer=null; hostConn=null; CONNS=[]; S=null; V=null; L=null; LV=null; waiter=null; HOST=false; ONLINE=false; lastSeq=-1;
+  banner('');
+}
+function goSetup(msg){ teardown(); SCREEN=''; showScreen('setup'); setupMsg(msg||''); }
+
+function startSolo(){
+  teardown();
+  myName=getName()||'You';
+  HOST=true; ONLINE=false;
+  const bots=+$('#solobots').value;
+  L={code:null, humans:[{name:myName}], bots, conns:[null]};
+  hostStart();
+}
+function hostRoom(){
+  myName=getName();
+  if(!myName){ setupMsg('Enter your name first, so other players know who you are.'); $('#myname').focus(); return; }
+  if(typeof Peer==='undefined'){ setupMsg('Online play needs the connection library, which did not load. Check your internet connection and reload the page.'); return; }
+  teardown(); setupMsg('Creating a room…');
+  roomCode=genCode();
+  peer=new Peer(PEER_PREFIX+roomCode.toLowerCase());
+  peer.on('open',()=>{
+    HOST=true; ONLINE=true;
+    L={code:roomCode, humans:[{name:myName}], bots:2, conns:[null]};
+    setupMsg(''); showScreen('lobby'); broadcastLobby();
+  });
+  peer.on('connection',c=>{ c.on('data',m=>onHostMsg(c,m)); c.on('close',()=>onHostClose(c)); });
+  peer.on('error',e=>{
+    if(e.type==='unavailable-id'){ hostRoom(); return; }
+    if(!L) goSetup(`Couldn't create a room (${e.type}). Check your connection and try again.`);
+  });
+  peer.on('disconnected',()=>{ try{ peer && !peer.destroyed && peer.reconnect(); }catch(e){} });
+}
+function lobbyView(){ return {code:L.code, humans:L.humans.map(h=>h.name), bots:L.bots}; }
+function broadcastLobby(){
+  const lv=lobbyView();
+  L.conns.forEach((c,i)=>{ if(c && c.open){ try{ c.send({type:'lobby', lobby:{...lv, you:i}}); }catch(e){} } });
+  LV={...lv, you:0}; renderLobby();
+}
+function onHostMsg(c,m){
+  if(!m || typeof m!=='object') return;
+  if(m.type==='hello'){
+    const name=cleanName(m.name);
+    if(S){
+      const seat=S.players.findIndex(p=>p.kind==='human' && !p.connected && p.name===name);
+      if(seat<0){ c.send({type:'reject', reason:'That game has already started. Ask the host to let you in after it ends.'}); setTimeout(()=>c.close(),400); return; }
+      CONNS[seat]=c; c.seat=seat; S.players[seat].connected=true; log(`${name} reconnected.`); sync(); return;
+    }
+    if(!L) return;
+    if(L.humans.length>=MAX_PLAYERS){ c.send({type:'reject', reason:'That room is full.'}); setTimeout(()=>c.close(),400); return; }
+    const uname=uniqueName(name, L.humans.map(h=>h.name));
+    L.humans.push({name:uname}); L.conns.push(c);
+    if(L.humans.length+L.bots>MAX_PLAYERS) L.bots=MAX_PLAYERS-L.humans.length;
+    broadcastLobby();
+  } else if(m.type==='act' && S && c.seat!=null && CONNS[c.seat]===c){
+    handleAction(c.seat, m.a, m.p);
+  }
+}
+function onHostClose(c){
+  if(S && c.seat!=null && CONNS[c.seat]===c){
+    CONNS[c.seat]=null; S.players[c.seat].connected=false;
+    log(`${S.players[c.seat].name} lost connection. They can rejoin with the same name and code.`);
+    sync(); return;
+  }
+  if(L && !S){ const k=L.conns.indexOf(c); if(k>0){ L.humans.splice(k,1); L.conns.splice(k,1); broadcastLobby(); } }
+}
+function hostStart(){
+  const total=L.humans.length+L.bots;
+  if(total<MIN_PLAYERS || total>MAX_PLAYERS) return;
+  const hn=L.humans.map(h=>h.name);
+  const seats=[...hn.map(n=>({name:n,kind:'human'})), ...botNames(L.bots,hn).map(n=>({name:n,kind:'bot'}))];
+  CONNS=L.conns.map(c=>c||null); CONNS.forEach((c,i)=>{ if(c) c.seat=i; });
+  startGame(seats);
+}
+function playAgain(){
+  if(!HOST || !S) return;
+  if(!ONLINE){ overDismissed=false; hostStart(); return; }
+  const keep=S.players.map((p,i)=>({p,i})).filter(x=>x.p.kind==='human' && (x.i===0 || (CONNS[x.i] && CONNS[x.i].open)));
+  L.humans=keep.map(x=>({name:x.p.name})); L.conns=keep.map(x=>x.i===0?null:CONNS[x.i]);
+  L.bots=Math.max(0,Math.min(L.bots, MAX_PLAYERS-L.humans.length));
+  if(L.humans.length+L.bots<MIN_PLAYERS) L.bots=MIN_PLAYERS-L.humans.length;
+  S=null; V=null; CONNS=[]; waiter=null;
+  showScreen('lobby'); broadcastLobby();
+}
+function renderLobby(){
+  const lv=LV; if(!lv) return;
+  const total=lv.humans.length+lv.bots, link=`${location.origin}${location.pathname}#${lv.code}`;
+  const seats=[...lv.humans.map((n,i)=>`<div class="seat"><span>${esc(n)}${i===lv.you?' (you)':''}</span><span class="badge">${i===0?'Host':'Player'}</span></div>`),
+    ...Array.from({length:lv.bots},()=>`<div class="seat"><span>AI rival</span><span class="badge ai">AI</span></div>`)].join('');
+  $('#lobby').innerHTML = `
+    <div class="panel">
+      <span class="label">Room code</span>
+      <div class="code">${esc(lv.code||'')}</div>
+      ${HOST?`<p>Send friends this code or link. They open Bean Barter, enter their name and the code, and join.</p>
+      <div class="linkbox"><input id="invite" readonly value="${esc(link)}" aria-label="Invite link"><button class="ghost" data-act="copy">Copy link</button></div>`:''}
+    </div>
+    <div class="panel">
+      <span class="label">Players · ${total} of ${MAX_PLAYERS}</span>
+      <div class="seats">${seats}</div>
+      ${HOST?`<div class="field-row"><span class="label">AI rivals</span>
+        <div class="stepper"><button class="small ghost" data-act="botsdown" ${lv.bots<=0?'disabled':''} aria-label="One fewer AI">−</button><b>${lv.bots}</b><button class="small ghost" data-act="botsup" ${total>=MAX_PLAYERS?'disabled':''} aria-label="One more AI">+</button></div></div>
+        <p>${total<MIN_PLAYERS?`You need at least ${MIN_PLAYERS} players. Wait for friends or add AI rivals.`:'Ready when you are. Players who join later can only take part in the next game.'}</p>
+        <div><button data-act="start" ${total<MIN_PLAYERS||total>MAX_PLAYERS?'disabled':''}>Start game</button></div>`
+      :`<p>Waiting for ${esc(lv.humans[0]||'the host')} to start the game.</p>`}
+    </div>`;
+}
+function joinRoom(){
+  myName=getName();
+  const code=($('#joincode').value||'').trim().toUpperCase();
+  if(!myName){ setupMsg('Enter your name first, so other players know who you are.'); $('#myname').focus(); return; }
+  if(!/^[A-Z0-9]{5}$/.test(code)){ setupMsg('Room codes are 5 letters and numbers. Check the code with your host.'); $('#joincode').focus(); return; }
+  if(typeof Peer==='undefined'){ setupMsg('Online play needs the connection library, which did not load. Check your internet connection and reload the page.'); return; }
+  teardown(); roomCode=code; setupMsg('Connecting…');
+  try{ sessionStorage.setItem('bb-join', JSON.stringify({code,name:myName})); }catch(e){}
+  peer=new Peer();
+  peer.on('open',()=>{
+    hostConn=peer.connect(PEER_PREFIX+code.toLowerCase(), {reliable:true});
+    hostConn.on('open',()=>{ banner(''); hostConn.send({type:'hello', name:myName}); });
+    hostConn.on('data',onClientMsg);
+    hostConn.on('close',()=>{ if(peer) banner('Lost connection to the host.', true); });
+  });
+  peer.on('error',e=>{
+    if(e.type==='peer-unavailable'){ if(V) banner('The host is not reachable right now.', true); else goSetup(`No room found with code ${code}. Check the code with your host, and make sure their room is still open.`); }
+    else if(!V && !LV) goSetup(`Couldn't connect (${e.type}). Check your connection and try again.`);
+  });
+}
+function onClientMsg(m){
+  if(!m || typeof m!=='object') return;
+  if(m.type==='lobby'){ LV=m.lobby; V=null; setupMsg(''); showScreen('lobby'); renderLobby(); }
+  else if(m.type==='state'){ receiveView(m.view); }
+  else if(m.type==='reject'){ goSetup(m.reason); }
 }
 
 /* ---------- input ---------- */
+function toggle(arr,i){ const k=arr.indexOf(i); if(k>=0) arr.splice(k,1); else arr.push(i); }
 function handle(el){
-  const act=el.dataset.act, i=+el.dataset.i;
-  if(act==='new'){ $('#over').hidden=true; newGame(); return; }
-  if(act==='closeover'){ $('#over').hidden=true; return; }
-  if(!S || S.over) return;
-  const p=me();
-  switch(act){
-    case 'field': clickField(i); break;
-    case 'harvest': if(canHarvest(p,i)){ harvest(p,i); S.msg=''; render(); } break;
-    case 'flip': humanFlip(); break;
-    case 'face': S.sel.face.has(i)?S.sel.face.delete(i):S.sel.face.add(i); S.offers=null; S.reply=''; render(); break;
-    case 'hand': S.sel.hand.has(i)?S.sel.hand.delete(i):S.sel.hand.add(i); S.offers=null; S.reply=''; render(); break;
-    case 'pend': S.pendSel=i; render(); break;
-    case 'ask': askTable(); break;
-    case 'take': takeOffer(i); break;
-    case 'endtrade': humanEndTrading(); break;
-    case 'endturn': humanEndTurn(); break;
-    case 'propose': proposeToActive(); break;
-    case 'pass': resume(); break;
+  const a=el.dataset.act, i=+el.dataset.i;
+  switch(a){
+    case 'solo': startSolo(); return;
+    case 'host': hostRoom(); return;
+    case 'join': joinRoom(); return;
+    case 'start': if(HOST && L) hostStart(); return;
+    case 'botsup': if(HOST && L && L.humans.length+L.bots<MAX_PLAYERS){ L.bots++; broadcastLobby(); } return;
+    case 'botsdown': if(HOST && L && L.bots>0){ L.bots--; broadcastLobby(); } return;
+    case 'copy': { const inp=$('#invite'); const done=()=>{ el.textContent='Copied'; };
+      if(navigator.clipboard) navigator.clipboard.writeText(inp.value).then(done,()=>{ inp.select(); });
+      else inp.select(); return; }
+    case 'leave':
+      if(!leaveArmed){ leaveArmed=true; el.textContent = HOST&&ONLINE ? 'Click again to end the game for everyone' : 'Click again to leave'; return; }
+      goSetup(''); return;
+    case 'leave-now': goSetup(''); return;
+    case 'reconnect': joinRoom(); return;
+    case 'again': playAgain(); return;
+    case 'closeover': overDismissed=true; $('#over').hidden=true; return;
+    case 'takeover': if(HOST && S) takeOver(i); return;
+  }
+  if(!V || V.over) return;
+  switch(a){
+    case 'field': {
+      const t=plantType(); if(!t) return;
+      const f=meP().fields[i];
+      if(f.n && f.t!==t){ U.msg=`That field is growing ${nm(f.t)}. Harvest it first, or choose another field.`; render(); return; }
+      U.msg=''; act('plant',{field:i,pend:U.pendSel}); U.pendSel=0; return;
+    }
+    case 'harvest': U.msg=''; act('harvest',{field:i}); return;
+    case 'flip': act('flip'); return;
+    case 'face': toggle(U.sel.face,i); render(); return;
+    case 'hand': toggle(U.sel.hand,i); render(); return;
+    case 'pend': U.pendSel=i; render(); return;
+    case 'ask': act('ask',{face:U.sel.face,hand:U.sel.hand,want:U.want,qty:U.qty}); return;
+    case 'take': act('take',{seat:i}); return;
+    case 'accept': act('answer',{pid:i,accept:true}); return;
+    case 'decline': act('answer',{pid:i,accept:false}); return;
+    case 'respond': if(V.ask) act('respond',{id:V.ask.id,hand:U.sel.hand}); return;
+    case 'respondpass': if(V.ask) act('respond',{id:V.ask.id,pass:true}); return;
+    case 'propose': act('propose',{face:U.sel.face,hand:U.sel.hand,want:U.want,qty:U.qty}); return;
+    case 'endtrade': act('endtrade'); return;
+    case 'pass': act('pass'); return;
+    case 'endturn': act('endturn'); return;
   }
 }
 document.addEventListener('click',e=>{ const el=e.target.closest('[data-act]'); if(el && !el.disabled) handle(el); });
-document.addEventListener('keydown',e=>{ if((e.key==='Enter'||e.key===' ') && e.target.matches('[data-act][role="button"]')){ e.preventDefault(); handle(e.target); } });
-document.addEventListener('change',e=>{
-  if(e.target.id==='want'){ S.want=e.target.value; S.qty=1; S.offers=null; render(); }
-  else if(e.target.id==='qty'){ S.qty=+e.target.value; S.offers=null; render(); }
-  else if(e.target.id==='speed'){ speed=+e.target.value; }
-  else if(e.target.id==='autopass'){ autoPass=e.target.checked; if(autoPass && S && S.phase==='botTrade') resume(); }
+document.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ') && e.target.matches('[data-act][role="button"]')){ e.preventDefault(); handle(e.target); }
+  if(e.key==='Enter' && e.target.id==='joincode'){ joinRoom(); }
 });
-newGame();
+document.addEventListener('change',e=>{
+  if(e.target.id==='want'){ U.want=e.target.value; U.qty=1; render(); }
+  else if(e.target.id==='qty'){ U.qty=+e.target.value; render(); }
+  else if(e.target.id==='speed'){ speed=+e.target.value; }
+  else if(e.target.id==='autopass'){ autoPass=e.target.checked; afterRender(); }
+});
+
+function boot(){
+  try{ const n=localStorage.getItem('bb-name'); if(n) $('#myname').value=n; }catch(e){}
+  const h=(location.hash||'').slice(1).toUpperCase();
+  if(/^[A-Z0-9]{5}$/.test(h)){ $('#joincode').value=h; setupMsg('You were invited to a game. Enter your name and press Join game.'); }
+  showScreen('setup');
+}
+boot();
 </script>

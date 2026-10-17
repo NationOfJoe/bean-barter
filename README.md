@@ -1,6 +1,18 @@
 # Bean Barter
 
-A browser version of the card game Bohnanza by Uwe Rosenberg, using the 4-player base game rules: 104 cards, 8 bean types, two fields each. You play against three computer rivals: Mira, Otto and Juno.
+A browser version of the card game Bohnanza by Uwe Rosenberg, using the base game rules for 3 to 5 players: 104 cards, 8 bean types, two fields each (three each in a 3-player game).
+
+Play against AI rivals on your own, or host an online room: friends join with a 5-letter code from their own phone or computer, and you can fill any empty seats with AI.
+
+## Playing online
+
+1. Enter your name and press **Create room**. You get a room code and an invite link.
+2. Friends open the link (or the site), enter their name and the code, and press **Join game**.
+3. Set how many AI rivals to add (3 to 5 players in total) and press **Start game**.
+
+The host's browser runs the game, so the host needs to keep the page open. Players connect directly to the host through [PeerJS](https://peerjs.com/), which uses its free public server only to introduce the browsers to each other; there is no game server. If someone drops out, they can rejoin with the same name and code, or the host can let the AI play their seat.
+
+Online play needs the page served from the web (for example GitHub Pages). It doesn't work inside the claude.ai artifact, which blocks the connection.
 
 This is an unofficial fan project and isn't affiliated with AMIGO or Rio Grande Games. The cards are drawn in plain CSS, not copied from the game's artwork.
 
@@ -20,7 +32,7 @@ The game ends when the deck runs out for the third time. Most coins wins.
 
 - `bean-barter.html` is the game source.
 - `index.html` is generated from it by `build.js`. This is the page GitHub Pages serves, and you can also open it straight from disk.
-- `tests/simulate.js` plays five full games without a browser and checks that each game ends and all 104 cards are accounted for.
+- `tests/simulate.js` plays 15 full games without a browser, with 1 to 3 human seats and 0 to 3 AI, and checks that each game ends after the third deck run-out, all 104 cards are accounted for, and 3-player games get three fields.
 
 ## Development
 
@@ -31,4 +43,4 @@ node build.js
 node tests/simulate.js
 ```
 
-Each simulation line shows the coins per player (You/Mira/Otto/Juno), whether the game ended, how many times the deck ran out, and the total card count.
+Each simulation line shows PASS or FAIL, the coins per player, the winner, and how many trades happened.
