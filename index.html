@@ -816,7 +816,7 @@ function botNames(n,taken){ const out=[]; for(const b of BOT_NAMES){ if(out.leng
 
 function teardown(){
   try{ peer && peer.destroy(); }catch(e){}
-  peer=null; hostConn=null; CONNS=[]; S=null; V=null; L=null; LV=null; waiter=null; HOST=false; ONLINE=false; lastSeq=-1;
+  peer=null; hostConn=null; CONNS=[]; lastHostMsg=0; S=null; V=null; L=null; LV=null; waiter=null; HOST=false; ONLINE=false; lastSeq=-1;
   banner('');
 }
 function goSetup(msg){ teardown(); SCREEN=''; showScreen('setup'); setupMsg(msg||''); }
@@ -841,7 +841,7 @@ function hostRoom(){
     L={code:roomCode, humans:[{name:myName}], bots:2, conns:[null]};
     setupMsg(''); showScreen('lobby'); broadcastLobby();
   });
-  peer.on('connection',c=>{ c.on('data',m=>onHostMsg(c,m)); c.on('close',()=>onHostClose(c)); });
+  peer.on('connection',c=>{ c.lastSeen=Date.now(); c.on('data',m=>onHostMsg(c,m)); c.on('close',()=>onHostClose(c)); });
   peer.on('error',e=>{
     if(e.type==='unavailable-id'){ hostRoom(); return; }
     if(!L) goSetup(`Couldn't create a room (${e.type}). Check your connection and try again.`);
@@ -856,11 +856,16 @@ function broadcastLobby(){
 }
 function onHostMsg(c,m){
   if(!m || typeof m!=='object') return;
+  c.lastSeen=Date.now();
+  if(m.type==='ping') return;
+  if(m.type==='bye'){ dropConn(c); return; }
   if(m.type==='hello'){
     const name=cleanName(m.name);
     if(S){
-      const seat=S.players.findIndex(p=>p.kind==='human' && !p.connected && p.name===name);
+      // Rejoin: a player with this name gets their seat back (also covers a reload before the old link timed out).
+      const seat=S.players.findIndex((p,i)=>i>0 && p.kind==='human' && p.name===name);
       if(seat<0){ c.send({type:'reject', reason:'That game has already started. Ask the host to let you in after it ends.'}); setTimeout(()=>c.close(),400); return; }
+      const old=CONNS[seat]; if(old && old!==c){ old.seat=null; try{ old.close(); }catch(e){} }
       CONNS[seat]=c; c.seat=seat; S.players[seat].connected=true; log(`${name} reconnected.`); sync(); return;
     }
     if(!L) return;
@@ -873,14 +878,34 @@ function onHostMsg(c,m){
     handleAction(c.seat, m.a, m.p);
   }
 }
-function onHostClose(c){
+function onHostClose(c){ dropConn(c); }
+function dropConn(c){
   if(S && c.seat!=null && CONNS[c.seat]===c){
-    CONNS[c.seat]=null; S.players[c.seat].connected=false;
-    log(`${S.players[c.seat].name} lost connection. They can rejoin with the same name and code.`);
+    const seat=c.seat; CONNS[seat]=null; c.seat=null; S.players[seat].connected=false;
+    try{ c.close(); }catch(e){}
+    log(`${S.players[seat].name} lost connection. They can rejoin with the same name and code, or the host can let the AI play for them.`);
     sync(); return;
   }
-  if(L && !S){ const k=L.conns.indexOf(c); if(k>0){ L.humans.splice(k,1); L.conns.splice(k,1); broadcastLobby(); } }
+  if(L && !S){ const k=L.conns.indexOf(c); if(k>0){ L.humans.splice(k,1); L.conns.splice(k,1); try{ c.close(); }catch(e){} broadcastLobby(); } }
 }
+// Closing a tab doesn't reliably close a WebRTC link, so both sides ping every 3s and give up after 12s of silence.
+const HEARTBEAT=3000, TIMEOUT=12000;
+let lastHostMsg=0;
+setInterval(()=>{
+  const now=Date.now();
+  if(HOST && ONLINE){
+    const conns = S ? CONNS : (L ? L.conns : []);
+    [...conns].forEach(c=>{
+      if(!c) return;
+      if(c.lastSeen && now-c.lastSeen>TIMEOUT){ dropConn(c); return; }
+      if(c.open){ try{ c.send({type:'ping'}); }catch(e){} }
+    });
+  } else if(hostConn && peer){
+    if(hostConn.open){ try{ hostConn.send({type:'ping'}); }catch(e){} }
+    if(lastHostMsg && now-lastHostMsg>TIMEOUT && $('#banner').hidden){ banner('Lost connection to the host.', true); }
+  }
+}, HEARTBEAT);
+addEventListener('pagehide',()=>{ if(!HOST && hostConn && hostConn.open){ try{ hostConn.send({type:'bye'}); }catch(e){} } });
 function hostStart(){
   const total=L.humans.length+L.bots;
   if(total<MIN_PLAYERS || total>MAX_PLAYERS) return;
@@ -943,6 +968,9 @@ function joinRoom(){
 }
 function onClientMsg(m){
   if(!m || typeof m!=='object') return;
+  lastHostMsg=Date.now();
+  if(!$('#banner').hidden) banner('');
+  if(m.type==='ping') return;
   if(m.type==='lobby'){ LV=m.lobby; V=null; setupMsg(''); showScreen('lobby'); renderLobby(); }
   else if(m.type==='state'){ receiveView(m.view); }
   else if(m.type==='reject'){ goSetup(m.reason); }

@@ -17,7 +17,7 @@ function makeContext() {
     location: { hash: '', origin: '', pathname: '' },
     localStorage: { getItem() { return null; }, setItem() {} },
     sessionStorage: { getItem() { return null; }, setItem() {} },
-    setTimeout: f => setImmediate(f),
+    setTimeout: f => setImmediate(f), setInterval() {}, addEventListener() {},
   };
   vm.createContext(ctx);
   vm.runInContext(src + '\n;this.api={startGame,handleAction,canHarvest,get S(){return S}, setSpeed(v){speed=v}};', ctx);
