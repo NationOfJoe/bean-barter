@@ -1,0 +1,600 @@
+<title>Bean Barter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shrikhand&family=Figtree:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout: a farm table seen from above. Rivals sit across the top, the market is in the middle, your fields and hand are at your elbow. */
+:root{
+  --loam:#1b2318; --plot:#243020; --plot-2:#2e3b28; --line:#41523a;
+  --stock:#f1e9d2; --ink:#231e16; --sprout:#ebe7d6; --muted:#a6b096;
+  --marigold:#eaa93b; --good:#86cd70; --warn:#ea7258;
+  --f-display:'Shrikhand','Cooper Black',Georgia,serif;
+  --f-body:'Figtree',system-ui,-apple-system,sans-serif;
+  --f-mono:'DM Mono',ui-monospace,Consolas,monospace;
+  color-scheme:dark;
+}
+html,body{background:var(--loam);color:var(--sprout);font-family:var(--f-body)}
+body{background:radial-gradient(1200px 600px at 50% -10%, var(--plot-2), var(--loam) 70%) fixed, var(--loam)}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:14px 40px;display:grid;gap:14px}
+button,select{font:inherit}
+button{background:var(--marigold);color:var(--ink);border:0;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer}
+button.ghost{background:transparent;color:var(--sprout);border:1px solid var(--line)}
+button:disabled{opacity:.35;cursor:not-allowed}
+button:focus-visible,select:focus-visible,[data-act]:focus-visible{outline:2px solid var(--marigold);outline-offset:2px}
+select{background:var(--plot);color:var(--sprout);border:1px solid var(--line);border-radius:8px;padding:7px 8px}
+.label{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+header{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;justify-content:space-between}
+h1{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,4vw,40px);margin:0;color:var(--marigold);line-height:1;letter-spacing:.01em}
+h1 small{display:block;font-family:var(--f-body);font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:6px;font-weight:700}
+.stats{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
+.stat{display:grid;gap:2px}
+.stat b{font-family:var(--f-mono);font-size:18px;font-weight:500}
+.stat b.disctop{font-family:var(--f-body);font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;min-height:22px}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.controls label{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
+
+/* rivals */
+#opps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.opp{background:var(--plot);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:8px;min-width:0}
+.opp.active{border-color:var(--marigold);box-shadow:0 0 0 1px var(--marigold) inset}
+.opp-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.opp-name{font-family:var(--f-display);font-size:22px;line-height:1}
+.opp-meta{font-size:12px;color:var(--muted);display:flex;gap:10px}
+.minis{display:flex;flex-wrap:wrap;gap:6px}
+.mini{display:flex;align-items:center;gap:6px;background:var(--plot-2);border-radius:8px;padding:4px 8px 4px 4px;font-size:13px;min-width:0}
+.mini.empty{color:var(--muted);padding:4px 8px}
+.chip{width:16px;height:22px;border-radius:50% 50% 46% 54%/62% 62% 38% 38%;background:var(--bean);box-shadow:inset -3px -3px 0 rgba(0,0,0,.18)}
+.backs{display:flex;gap:2px;align-items:center}
+.back{width:10px;height:14px;border-radius:2px;background:repeating-linear-gradient(45deg,var(--line) 0 2px,var(--plot-2) 2px 4px);border:1px solid var(--line)}
+.pend-row{font-size:12px;color:var(--muted);display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+
+/* market */
+.mid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px}
+.market{background:var(--plot);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:14px;align-content:start;min-width:0}
+.status{font-size:16px;font-weight:600;line-height:1.4;text-wrap:balance}
+.status .who{color:var(--marigold)}
+.msg{color:var(--warn);font-size:14px}
+.reply{font-size:14px;background:var(--plot-2);border-radius:8px;padding:8px 10px}
+.faceup{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start;min-height:20px}
+.fu{display:grid;gap:6px;justify-items:center}
+.interest{font-size:11px;color:var(--good);max-width:96px;text-align:center}
+.trade{display:grid;gap:10px;border-top:1px dashed var(--line);padding-top:12px}
+.trade-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.give{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:14px;min-height:26px}
+.tag{display:inline-flex;align-items:center;gap:5px;background:var(--plot-2);border-radius:6px;padding:3px 7px 3px 4px;font-size:13px}
+.offers{display:grid;gap:6px}
+.offer{display:flex;justify-content:space-between;gap:10px;align-items:center;background:var(--plot-2);border-radius:8px;padding:8px 10px;font-size:14px;flex-wrap:wrap}
+.offer.no{color:var(--muted)}
+.offer button{padding:6px 12px}
+aside.logbox{background:var(--plot);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;grid-template-rows:auto 1fr;gap:8px;max-height:430px;min-width:0}
+#log{list-style:none;margin:0;padding:0;overflow-y:auto;font-size:13px;line-height:1.45;color:var(--muted);display:grid;gap:4px;align-content:start}
+#log li:first-child{color:var(--sprout)}
+details.rules{font-size:13px;color:var(--muted);line-height:1.5}
+details.rules summary{cursor:pointer;color:var(--sprout);font-weight:700}
+details.rules ol{padding-left:18px;margin:6px 0}
+
+/* you */
+.you{background:var(--plot);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:14px}
+.you.active{border-color:var(--marigold)}
+.you-top{display:flex;flex-wrap:wrap;gap:10px 18px;justify-content:space-between;align-items:center}
+.you-top h2{font-family:var(--f-display);font-weight:400;font-size:26px;margin:0;line-height:1}
+.coins{display:flex;align-items:center;gap:8px;font-size:15px}
+.coin{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#f7d27a,var(--marigold) 60%,#b07a1e);box-shadow:0 1px 0 rgba(0,0,0,.4)}
+#myfields{display:flex;flex-wrap:wrap;gap:12px}
+.field{background:var(--plot-2);border:2px solid transparent;border-radius:12px;padding:10px;display:grid;gap:8px;justify-items:center;width:150px;min-height:212px;align-content:start;position:relative}
+.field.can{border-color:var(--good);cursor:pointer}
+.field.no{opacity:.7}
+.flabel{justify-self:start}
+.field .empty{height:118px;width:86px;border:2px dashed var(--line);border-radius:9px;display:grid;place-items:center;color:var(--muted);font-size:13px}
+.stack{position:relative}
+.count{position:absolute;right:-10px;top:-10px;background:var(--marigold);color:var(--ink);font-family:var(--f-mono);font-weight:500;border-radius:999px;min-width:28px;height:28px;display:grid;place-items:center;font-size:15px;padding:0 6px}
+.fmeta{font-size:12px;color:var(--muted)}
+.fmeta b{color:var(--sprout);font-family:var(--f-mono)}
+.field button{padding:5px 12px;font-size:13px}
+.rowlabel{display:flex;gap:10px;align-items:baseline}
+.hand{display:flex;gap:8px;overflow-x:auto;padding:12px 4px 8px;min-height:140px}
+
+/* bean cards */
+.card{--w:86px;width:var(--w);height:118px;flex:0 0 auto;background:var(--stock);color:var(--ink);border-radius:9px;padding:6px 6px 5px;display:grid;grid-template-rows:auto 1fr auto;justify-items:center;box-shadow:0 2px 0 rgba(0,0,0,.35);position:relative;transition:transform .15s ease}
+.card .cname{font-weight:800;font-size:12px;letter-spacing:.02em;line-height:1.1;text-align:center}
+.card .bean{width:34px;height:46px;align-self:center;border-radius:50% 50% 46% 54%/62% 62% 38% 38%;background:radial-gradient(circle at 34% 30%,rgba(255,255,255,.55),transparent 32%),var(--bean);transform:rotate(-14deg);box-shadow:inset -5px -6px 0 rgba(0,0,0,.18),0 2px 0 rgba(0,0,0,.25);position:relative}
+.card.t-blackeye .bean::after{content:"";position:absolute;width:12px;height:10px;border-radius:50%;background:#1d1a14;left:12px;top:17px}
+.meter{display:flex;gap:2px;font-family:var(--f-mono);font-size:10px;width:100%;justify-content:space-between}
+.m{display:grid;justify-items:center;line-height:1.05;background:rgba(0,0,0,.06);border-radius:4px;padding:1px 2px;min-width:16px}
+.m i{font-style:normal;color:#9a6d17;font-size:9px}
+.m.off{color:#b3a98f}
+.card.sel{transform:translateY(-10px);box-shadow:0 0 0 3px var(--marigold),0 6px 10px rgba(0,0,0,.4)}
+.card.next{box-shadow:0 0 0 3px var(--good),0 2px 0 rgba(0,0,0,.35)}
+.card.pick{cursor:pointer}
+.card.pick:hover{transform:translateY(-4px)}
+.card.sel.pick:hover{transform:translateY(-10px)}
+.nexttag{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--good);color:var(--ink);font-size:10px;font-weight:800;padding:1px 6px;border-radius:999px;white-space:nowrap;text-transform:uppercase;letter-spacing:.06em}
+.stack .card{box-shadow:3px 3px 0 -1px var(--stock),3px 3px 0 0 rgba(0,0,0,.3),6px 6px 0 -1px var(--stock),6px 6px 0 0 rgba(0,0,0,.3)}
+
+/* end */
+#over{position:fixed;inset:0;background:rgba(10,14,9,.78);display:grid;place-items:center;padding:16px;z-index:5}
+.overbox{background:var(--plot);border:1px solid var(--marigold);border-radius:16px;padding:24px;max-width:420px;width:100%;display:grid;gap:14px}
+.overbox h2{font-family:var(--f-display);font-weight:400;color:var(--marigold);font-size:34px;margin:0;line-height:1.1}
+.rank{display:grid;gap:6px}
+.rank div{display:flex;justify-content:space-between;background:var(--plot-2);border-radius:8px;padding:8px 12px}
+.rank div:first-child{outline:1px solid var(--marigold)}
+
+@media (max-width:900px){.mid{grid-template-columns:1fr} aside.logbox{max-height:240px}}
+@media (max-width:700px){#opps{grid-template-columns:1fr}.field{width:calc(50% - 6px);min-width:0}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Bean Barter<small>A bean-farming trading game · you vs. three rivals</small></h1>
+    <div class="stats">
+      <div class="stat"><span class="label">Deck</span><b id="deck">0</b></div>
+      <div class="stat"><span class="label">Discard</span><b id="disc">0</b></div>
+      <div class="stat"><span class="label">Top discard</span><b id="disctop" class="disctop">–</b></div>
+      <div class="stat"><span class="label">Deck pass</span><b><span id="pass">1</span>/3</b></div>
+    </div>
+    <div class="controls">
+      <label for="speed">Rival speed
+        <select id="speed"><option value="1100">Slow</option><option value="600" selected>Normal</option><option value="200">Fast</option></select>
+      </label>
+      <label for="autopass"><input type="checkbox" id="autopass"> Skip my trade window on rivals' turns</label>
+      <button class="ghost" data-act="new">New game</button>
+    </div>
+  </header>
+
+  <section id="opps" aria-label="Rivals"></section>
+
+  <div class="mid">
+    <section class="market" id="market" aria-live="polite"></section>
+    <aside class="logbox">
+      <span class="label">Table talk</span>
+      <ul id="log"></ul>
+    </aside>
+  </div>
+
+  <section class="you" id="you">
+    <div class="you-top">
+      <h2>Your farm</h2>
+      <div class="coins"><span class="coin"></span><span><b class="num" id="mycoins">0</b> coins</span></div>
+    </div>
+    <div id="myfields"></div>
+    <div id="mypendwrap"></div>
+    <div>
+      <div class="rowlabel"><span class="label">Your hand</span><span class="fmeta">Kept in the order you drew it. Planting always takes the card on the left.</span></div>
+      <div class="hand" id="myhand"></div>
+    </div>
+  </section>
+
+  <details class="rules">
+    <summary>How a turn works</summary>
+    <ol>
+      <li><b>Must plant, may plant.</b> Plant the first card of your hand into a field. You may plant the next one too.</li>
+      <li><b>Turn up two.</b> Two cards from the deck go into the market.</li>
+      <li><b>Trade.</b> Offer market cards or any cards from your hand, in any order. Only the active player trades: rivals can't trade with each other on your turn, and on a rival's turn you can trade with them. Cards you receive can't be traded again, and gifts must be accepted.</li>
+      <li><b>Plant trades.</b> Every card you kept or received must be planted.</li>
+      <li><b>Draw three</b> to the back of your hand.</li>
+    </ol>
+    A field holds one bean type. To plant a different type you have to harvest it first. The numbers on each card show how many beans earn 1, 2, 3 or 4 coins. You can harvest at any time, even on someone else's turn, but not a field holding a single bean while another field has more. When the last card is drawn, the discards are reshuffled into a new deck. When the deck runs out for the third time the game ends: if that happens while turning cards up, the turn finishes trading and planting first. Every field is then harvested, and cards in hand don't count. Most coins wins; ties go to the player seated furthest from the starting player (you start, so Juno wins ties, then Otto, then Mira).
+  </details>
+</div>
+
+<div id="over" hidden></div>
+
+<script>
+const TYPES = {
+  blue:    {name:'Blue',       count:20, meter:[4,6,8,10],    c:'#3e70b8'},
+  chili:   {name:'Chili',      count:18, meter:[3,6,8,9],     c:'#cf3b2b'},
+  stink:   {name:'Stink',      count:16, meter:[3,5,7,8],     c:'#8d8436'},
+  green:   {name:'Green',      count:14, meter:[3,5,6,7],     c:'#4f9c3a'},
+  soy:     {name:'Soy',        count:12, meter:[2,4,6,7],     c:'#d8ae57'},
+  blackeye:{name:'Black-eyed', count:10, meter:[2,4,5,6],     c:'#efe7d1'},
+  red:     {name:'Red',        count:8,  meter:[2,3,4,5],     c:'#a02639'},
+  garden:  {name:'Garden',     count:6,  meter:[null,2,3,null],c:'#8cc56f'},
+};
+const ORDER = Object.keys(TYPES);
+const BOTS = ['Mira','Otto','Juno'];
+const $ = s => document.querySelector(s);
+let S, speed = 600, autoPass = false;
+
+const nm = t => TYPES[t].name;
+function coinsFor(t,n){ let c=0; TYPES[t].meter.forEach((v,i)=>{ if(v!=null && n>=v) c=i+1; }); return c; }
+const rar = t => coinsFor(t,4)*0.25;
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.random()*(i+1)|0; [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function group(types){ const m={}; types.forEach(t=>m[t]=(m[t]||0)+1); return Object.entries(m).map(([t,n])=>(n>1?n+'× ':'')+nm(t)).join(', '); }
+const me = () => S.players[0];
+const wait = () => new Promise(r=>setTimeout(r, speed));
+function log(s){ S.log.unshift(s); if(S.log.length>80) S.log.pop(); }
+function note(s){ S.note=s; log(s); }
+function mkPlayer(name,human){ return {name,human,hand:[],fields:[{t:null,n:0},{t:null,n:0}],coins:0,pending:[]}; }
+function clearSel(){ S.sel={face:new Set(),hand:new Set()}; S.offers=null; }
+
+function newGame(){
+  S = { id:Math.random(), deck:shuffle(ORDER.flatMap(t=>Array(TYPES[t].count).fill(t))), discard:[], runOuts:0, ending:false,
+        players:[mkPlayer('You',true), ...BOTS.map(n=>mkPlayer(n,false))], cur:0, phase:'plant', planted:0,
+        faceUp:[], log:[], want:'none', qty:1, offers:null, reply:'', pendSel:0, msg:'', note:'', over:false, resume:null };
+  clearSel();
+  for(let r=0;r<5;r++) S.players.forEach(p=>p.hand.push(S.deck.pop()));
+  log('New game. 104 bean cards shuffled, five cards each. You are the starting player.');
+  startHumanTurn();
+}
+
+// The deck "runs out" the moment its last card is drawn; the discards become the new deck right away.
+function runOut(){
+  S.runOuts++;
+  if(S.runOuts>=3){ S.ending=true; log('The deck ran out for the third time. This is the last turn.'); return; }
+  S.deck=shuffle(S.discard); S.discard=[];
+  log(`The deck ran out (${S.runOuts} of 3). The discard pile was reshuffled into a new deck.`);
+}
+function draw(){
+  if(S.ending) return null;
+  if(!S.deck.length){ runOut(); if(S.ending || !S.deck.length){ S.ending=true; return null; } }
+  const c=S.deck.pop();
+  if(!S.deck.length) runOut();
+  return c;
+}
+// Phase 4: if the deck runs out for the third time while drawing, the game ends at once.
+function drawThree(p){ for(let k=0;k<3 && !S.ending;k++){ const c=draw(); if(c!=null) p.hand.push(c); } if(S.ending) endGame(); }
+// Phase 2: turn up two (only one if the deck runs out for the last time); the turn still finishes phases 2 and 3.
+function turnUpTwo(){ for(let k=0;k<2 && !S.ending;k++){ const c=draw(); if(c!=null) S.faceUp.push(c); } }
+
+function canHarvest(p,i){ const f=p.fields[i]; return f.n>0 && !(f.n===1 && p.fields.some(o=>o.n>1)); }
+function harvest(p,i){
+  const f=p.fields[i]; if(!f.n) return 0;
+  const c=coinsFor(f.t,f.n); p.coins+=c;
+  for(let k=0;k<f.n-c;k++) S.discard.push(f.t);
+  log(`${p.human?'You':p.name} harvested ${f.n} ${nm(f.t)} for ${c} coin${c===1?'':'s'}.`);
+  f.t=null; f.n=0; return c;
+}
+
+/* ---------- rival brains ---------- */
+function simEval(p,base,inc){
+  const fs=p.fields.map(f=>({t:f.t,n:f.n})); let score=0;
+  const place=(t,count)=>{
+    let f=fs.find(x=>x.t===t), s;
+    if(f) s=3+rar(t);
+    else if((f=fs.find(x=>!x.n))) s=1.5+rar(t);
+    else { f=fs.reduce((a,c)=>a.n<=c.n?a:c); s=-2.5+coinsFor(f.t,f.n)*0.8; f.n=0; }
+    f.t=t; f.n++; if(count) score+=s;
+  };
+  base.forEach(t=>place(t,false)); inc.forEach(t=>place(t,true));
+  return score;
+}
+const delta = (p,inc) => simEval(p,p.pending,inc);
+function handLoss(p,i){
+  const t=p.hand[i];
+  if(p.fields.some(f=>f.t===t)) return 2.5+rar(t);
+  if(p.fields.some(f=>!f.n) && i<2) return 1;
+  return -1.2 + Math.min(i,6)*0.15;
+}
+const lossOf = (p,idxs) => idxs.reduce((s,i)=>s+handLoss(p,i),0);
+function botPlace(p,t){
+  let i=p.fields.findIndex(f=>f.t===t);
+  if(i<0) i=p.fields.findIndex(f=>!f.n);
+  if(i<0){
+    let best=-1, sc=-1e9;
+    p.fields.forEach((f,k)=>{ if(!canHarvest(p,k)) return; const v=coinsFor(f.t,f.n)*10-f.n; if(v>sc){sc=v;best=k;} });
+    harvest(p,best); i=best;
+  }
+  p.fields[i].t=t; p.fields[i].n++;
+}
+function botPlantAll(p){
+  p.pending.sort((a,b)=>(p.fields.some(f=>f.t===b)?1:0)-(p.fields.some(f=>f.t===a)?1:0));
+  while(p.pending.length) botPlace(p,p.pending.shift());
+}
+const spareIdx = (b,t,q) => b.hand.map((x,i)=>x===t?i:-1).filter(i=>i>=0).sort((x,y)=>handLoss(b,x)-handLoss(b,y)).slice(0,q);
+
+/* ---------- turn flow ---------- */
+function startHumanTurn(){
+  S.cur=0; S.phase='plant'; S.planted=0; S.msg=''; S.reply=''; clearSel();
+  S.note = me().hand.length ? '' : 'Your hand is empty, so you skip planting.';
+  render();
+}
+function plantType(){
+  const p=me();
+  if(S.over) return null;
+  if(S.cur===0 && S.phase==='plant' && S.planted<2 && p.hand.length) return p.hand[0];
+  if(S.phase==='humanPlant' && p.pending.length) return p.pending[Math.min(S.pendSel,p.pending.length-1)];
+  return null;
+}
+function clickField(i){
+  const p=me(), t=plantType(); if(!t) return;
+  const f=p.fields[i];
+  if(f.n && f.t!==t){ S.msg=`That field is growing ${nm(f.t)} beans. Harvest it first, or choose another field.`; render(); return; }
+  f.t=t; f.n++; S.msg='';
+  if(S.phase==='plant'){ p.hand.shift(); S.planted++; log(`You planted ${nm(t)}.`); }
+  else {
+    p.pending.splice(Math.min(S.pendSel,p.pending.length-1),1); S.pendSel=0; log(`You planted ${nm(t)}.`);
+    if(!p.pending.length && S.cur!==0) resume();
+  }
+  render();
+}
+function resume(){ if(S.resume){ const r=S.resume; S.resume=null; r(); } }
+function humanFlip(){
+  turnUpTwo();
+  S.phase='trade'; clearSel(); S.msg='';
+  note(S.faceUp.length?`You turned up ${S.faceUp.map(nm).join(' and ')}.`:'There were no cards left to turn up.');
+  render();
+}
+function endTrading(ai){
+  const a=S.players[ai]; a.pending.push(...S.faceUp); S.faceUp=[];
+  S.players.forEach(p=>{ if(!p.human) botPlantAll(p); });
+  clearSel(); S.want='none';
+}
+function humanEndTrading(){ endTrading(0); S.phase='humanPlant'; S.pendSel=0; S.note=''; render(); }
+function humanEndTurn(){
+  if(S.ending){ endGame(); render(); return; }
+  drawThree(me()); if(S.over){ render(); return; }
+  log('You drew three cards.');
+  S.cur=1; runBots();
+}
+async function runBots(){
+  const id=S.id;
+  while(S.cur!==0){
+    await botTurn(S.players[S.cur], id);
+    if(id!==S.id || S.over) return;
+    S.cur=(S.cur+1)%4;
+  }
+  startHumanTurn();
+}
+async function botTurn(b,id){
+  const alive=()=>id===S.id && !S.over;
+  S.phase='bot'; clearSel(); S.reply=''; S.msg=''; S.want='none';
+  if(b.hand.length){ const t=b.hand.shift(); botPlace(b,t); note(`${b.name} planted ${nm(t)}.`); render(); await wait(); if(!alive()) return; }
+  if(b.hand.length && b.fields.some(f=>f.t===b.hand[0] || !f.n)){ const t=b.hand.shift(); botPlace(b,t); note(`${b.name} also planted ${nm(t)}.`); render(); await wait(); if(!alive()) return; }
+  turnUpTwo();
+  note(S.faceUp.length?`${b.name} turned up ${S.faceUp.map(nm).join(' and ')}.`:`${b.name} had no cards left to turn up.`);
+  S.phase='botTrade'; render();
+  if(autoPass) await wait(); else await new Promise(r=>S.resume=r);
+  if(!alive()) return;
+  S.phase='bot'; S.reply='';
+  botBotTrades(b); render(); await wait(); if(!alive()) return;
+  endTrading(S.cur); note(`${b.name} planted everything from the market.`); render();
+  if(me().pending.length){ S.phase='humanPlant'; S.pendSel=0; render(); await new Promise(r=>S.resume=r); if(!alive()) return; }
+  if(S.ending){ endGame(); render(); return; }
+  S.phase='bot'; drawThree(b); if(S.over){ render(); return; }
+  note(`${b.name} drew three cards.`); render(); await wait();
+}
+function botBotTrades(b){
+  const others=S.players.filter(p=>!p.human && p!==b);
+  for(let k=S.faceUp.length-1;k>=0;k--){
+    const c=S.faceUp[k], rest=S.faceUp.filter((_,j)=>j!==k);
+    if(simEval(b,b.pending,S.faceUp)-simEval(b,b.pending,rest) > 0.5) continue;
+    for(const o of shuffle([...others])){
+      if(delta(o,[c])>0.4){
+        S.faceUp.splice(k,1); o.pending.push(c);
+        const ri=o.hand.findIndex((t,i)=>b.fields.some(f=>f.t===t) && handLoss(o,i)<0);
+        let extra=''; if(ri>=0){ const t=o.hand.splice(ri,1)[0]; b.pending.push(t); extra=` for a ${nm(t)}`; }
+        log(`${b.name} traded ${nm(c)} to ${o.name}${extra}.`); break;
+      }
+    }
+  }
+  for(const o of others){
+    const ri=o.hand.findIndex((t,i)=>b.fields.some(f=>f.t===t) && handLoss(o,i)<0);
+    if(ri>=0 && Math.random()<0.7){ const t=o.hand.splice(ri,1)[0]; b.pending.push(t); log(`${o.name} gave ${b.name} a ${nm(t)}.`); }
+  }
+}
+
+/* ---------- trading with you ---------- */
+function myGive(){ const p=me(); return [...[...S.sel.face].map(i=>S.faceUp[i]), ...[...S.sel.hand].map(i=>p.hand[i])]; }
+function askTable(){
+  const give=myGive();
+  if(!give.length && S.want==='none'){ S.msg='Pick cards to offer, or choose a bean to ask for.'; render(); return; }
+  S.msg=''; S.offers=[];
+  S.players.forEach((b,bi)=>{
+    if(b.human) return;
+    const gain=give.length?delta(b,give):0; let gives=[];
+    if(S.want==='any'){
+      gives=b.hand.map((_,i)=>i).filter(i=>handLoss(b,i)<0).sort((x,y)=>handLoss(b,x)-handLoss(b,y)).slice(0,Math.max(1,give.length));
+      if(!gives.length){ S.offers.push({bi,no:'has nothing to spare'}); return; }
+    } else if(S.want!=='none'){
+      gives=spareIdx(b,S.want,S.qty);
+      if(gives.length<S.qty){ S.offers.push({bi,no:`doesn't have ${S.qty>1?S.qty+' ':''}${nm(S.want)} to trade`}); return; }
+    }
+    const net=gain-lossOf(b,gives);
+    if(net>=0.3) S.offers.push({bi,gives});
+    else S.offers.push({bi,no:'passes'});
+  });
+  render();
+}
+function takeOffer(k){
+  const o=S.offers[k], b=S.players[o.bi], p=me();
+  const given=[];
+  [...S.sel.face].sort((x,y)=>y-x).forEach(i=>given.push(S.faceUp.splice(i,1)[0]));
+  [...S.sel.hand].sort((x,y)=>y-x).forEach(i=>given.push(p.hand.splice(i,1)[0]));
+  const got=[...o.gives].sort((x,y)=>y-x).map(i=>b.hand.splice(i,1)[0]);
+  b.pending.push(...given); p.pending.push(...got);
+  log(got.length ? `You gave ${b.name} ${group(given)||'nothing'} for ${group(got)}.` : `You gave ${b.name} ${group(given)}.`);
+  clearSel(); S.want='none'; S.qty=1; render();
+}
+function proposeToActive(){
+  const b=S.players[S.cur], p=me();
+  const F=[...S.sel.face], H=[...S.sel.hand];
+  let W=[];
+  if(S.want!=='none'){
+    W=spareIdx(b,S.want,S.qty);
+    if(W.length<S.qty){ S.reply=`${b.name}: “I don't have ${S.qty>1?S.qty+' ':''}${nm(S.want)} to spare.”`; render(); return; }
+  }
+  if(!F.length && !W.length){ S.reply='Pick a market card, or a bean to ask for from their hand.'; render(); return; }
+  const rest=S.faceUp.filter((_,j)=>!F.includes(j));
+  const net=simEval(b,b.pending,[...rest,...H.map(i=>p.hand[i])]) - lossOf(b,W) - simEval(b,b.pending,S.faceUp);
+  if(net>=0.3){
+    const got=[...F.map(i=>S.faceUp[i])], given=H.map(i=>p.hand[i]);
+    F.sort((x,y)=>y-x).forEach(i=>S.faceUp.splice(i,1));
+    H.sort((x,y)=>y-x).forEach(i=>p.hand.splice(i,1));
+    W.sort((x,y)=>y-x).forEach(i=>got.push(b.hand.splice(i,1)[0]));
+    p.pending.push(...got); b.pending.push(...given);
+    S.reply=`${b.name}: “Deal.”`;
+    log(`You got ${group(got)} from ${b.name}${given.length?' for '+group(given):' as a gift'}.`);
+    clearSel(); S.want='none'; S.qty=1;
+  } else {
+    const wants=[...new Set(b.fields.filter(f=>f.n).map(f=>nm(f.t)))];
+    S.reply=`${b.name}: “No thanks.”${wants.length?` They're growing ${wants.join(' and ')}.`:''}`;
+  }
+  render();
+}
+
+function endGame(){
+  if(S.over) return;
+  S.over=true; S.resume=null;
+  log('Game over. Every field is harvested.');
+  S.players.forEach(p=>p.fields.forEach((f,i)=>{ if(f.n) harvest(p,i); }));
+  // Ties go to the tied player seated furthest clockwise from the starting player (you, seat 0).
+  const ranked=S.players.map((p,seat)=>({p,seat})).sort((a,b)=>b.p.coins-a.p.coins || b.seat-a.seat).map(x=>x.p);
+  const win=ranked[0];
+  $('#over').innerHTML=`<div class="overbox" role="dialog" aria-label="Final scores">
+    <span class="label">Harvest's in</span>
+    <h2>${win.human?'You win the market!':win.name+' wins'}</h2>
+    <div class="rank">${ranked.map(p=>`<div><span>${p.name}</span><span class="num">${p.coins} coin${p.coins===1?'':'s'}</span></div>`).join('')}</div>
+    <div class="trade-row"><button data-act="new">Play again</button><button class="ghost" data-act="closeover">See the table</button></div>
+  </div>`;
+  $('#over').hidden=false;
+}
+
+/* ---------- rendering ---------- */
+function card(t,{cls='',act='',i='',tag=''}={}){
+  const T=TYPES[t];
+  return `<div class="card t-${t} ${cls}" style="--bean:${T.c}" ${act?`data-act="${act}" data-i="${i}" role="button" tabindex="0" aria-pressed="${cls.includes('sel')}"`:''} aria-label="${T.name} bean">
+    ${tag?`<span class="nexttag">${tag}</span>`:''}
+    <div class="cname">${T.name}</div><div class="bean"></div>
+    <div class="meter" title="Beans needed for 1, 2, 3, 4 coins">${T.meter.map((v,k)=>v==null?`<span class="m off">–<i>${k+1}</i></span>`:`<span class="m"><b>${v}</b><i>${k+1}¢</i></span>`).join('')}</div>
+  </div>`;
+}
+const tag = t => `<span class="tag"><span class="chip" style="--bean:${TYPES[t].c}"></span>${nm(t)}</span>`;
+function oppHTML(b,bi){
+  const minis=b.fields.map(f=>f.n?`<div class="mini"><span class="chip" style="--bean:${TYPES[f.t].c}"></span>${nm(f.t)} <b class="num">×${f.n}</b></div>`:`<div class="mini empty">empty field</div>`).join('');
+  return `<article class="opp ${S.cur===bi&&!S.over?'active':''}">
+    <div class="opp-top"><span class="opp-name">${b.name}</span><span class="opp-meta"><span><b class="num">${b.coins}</b> coins</span></span></div>
+    <div class="minis">${minis}</div>
+    <div class="pend-row"><span>Hand</span><span class="backs">${Array.from({length:Math.min(b.hand.length,14)},()=>'<span class="back"></span>').join('')}</span><span class="num">${b.hand.length}</span></div>
+    ${b.pending.length?`<div class="pend-row"><span>To plant:</span>${b.pending.map(tag).join('')}</div>`:''}
+  </article>`;
+}
+function wantSelect(fromName){
+  const opts=[`<option value="none">${fromName?'Nothing from their hand':'Nothing (a gift)'}</option>`];
+  if(!fromName) opts.push(`<option value="any">Any bean they can spare</option>`);
+  ORDER.forEach(t=>opts.push(`<option value="${t}">${nm(t)}</option>`));
+  return `<label class="label" for="want">${fromName?'Also ask for':'In return'}</label>
+    <select id="want">${opts.join('').replace(`value="${S.want}"`,`value="${S.want}" selected`)}</select>
+    ${S.want!=='none'&&S.want!=='any'?`<select id="qty" aria-label="How many">${[1,2,3].map(n=>`<option value="${n}" ${S.qty===n?'selected':''}>${n}</option>`).join('')}</select>`:''}`;
+}
+function marketHTML(){
+  const p=me(), cur=S.players[S.cur], myTurn=S.cur===0;
+  let status='', body='';
+  if(S.over){ status='Game over.'; }
+  else if(myTurn && S.phase==='plant'){
+    if(!p.hand.length) status='Your hand is empty. Turn up two cards.';
+    else if(S.planted===0) status='<span class="who">Your turn.</span> Plant the first card of your hand: click a highlighted field.';
+    else if(S.planted===1) status='You may plant your next card too, or turn up two cards.';
+    else status='Two beans planted. Turn up two cards.';
+    body=`<div class="trade-row"><button data-act="flip" ${S.planted===0&&p.hand.length?'disabled':''}>Turn up two cards</button></div>`;
+  }
+  else if(myTurn && S.phase==='trade'){
+    status='<span class="who">Trade.</span> Click market cards or hand cards to offer them, then ask the table. Whatever stays in the market is yours to plant.';
+    const fu=S.faceUp.map((t,i)=>{
+      const keen=S.players.filter(b=>!b.human && delta(b,[t])>=1.5).map(b=>b.name);
+      return `<div class="fu">${card(t,{cls:'pick'+(S.sel.face.has(i)?' sel':''),act:'face',i})}<span class="interest">${keen.length?keen.join(', ')+' interested':''}</span></div>`;
+    }).join('');
+    const give=myGive();
+    body=`<div class="faceup">${fu||'<span class="fmeta">The market is empty.</span>'}</div>
+    <div class="trade">
+      <div class="trade-row"><span class="label">You offer</span><div class="give">${give.length?give.map(tag).join(''):'<span class="fmeta">nothing selected</span>'}</div></div>
+      <div class="trade-row">${wantSelect()}<button data-act="ask">Ask the table</button></div>
+      ${S.offers?`<div class="offers">${S.offers.map((o,k)=>{ const b=S.players[o.bi];
+        return o.no?`<div class="offer no"><span>${b.name} ${o.no}.</span></div>`
+        :`<div class="offer"><span><b>${b.name}</b> ${o.gives.length?'gives you '+group(o.gives.map(i=>b.hand[i])):'takes '+(give.length>1?'them':'it')+' for free'}</span><button data-act="take" data-i="${k}">Take deal</button></div>`; }).join('')}</div>`:''}
+      <div class="trade-row"><button class="ghost" data-act="endtrade">End trading and plant${S.faceUp.length?' the market':''}</button></div>
+    </div>`;
+  }
+  else if(S.phase==='humanPlant'){
+    if(p.pending.length) status=`<span class="who">Plant your new beans.</span> Pick a card below, then click a field.${myTurn?'':` ${cur.name} is waiting.`}`;
+    else status='Everything is planted.';
+    body = myTurn && !p.pending.length ? `<div class="trade-row"><button data-act="endturn">${S.ending?'Finish the game':'Draw three and end turn'}</button></div>` : '';
+  }
+  else if(S.phase==='botTrade'){
+    const b=cur;
+    const wants=[...new Set(b.fields.filter(f=>f.n).map(f=>nm(f.t)))];
+    const unwanted=S.faceUp.filter((t,k)=>simEval(b,b.pending,S.faceUp)-simEval(b,b.pending,S.faceUp.filter((_,j)=>j!==k))<=0.5);
+    status=`<span class="who">${b.name}'s market is open.</span> Pick market cards you want and hand cards to offer, then propose.`;
+    const fu=S.faceUp.map((t,i)=>`<div class="fu">${card(t,{cls:'pick'+(S.sel.face.has(i)?' sel':''),act:'face',i})}</div>`).join('');
+    const give=[...S.sel.hand].map(i=>p.hand[i]);
+    body=`<div class="faceup">${fu||'<span class="fmeta">The market is empty.</span>'}</div>
+    <div class="fmeta">${b.name} is growing ${wants.length?wants.join(' and '):'nothing yet'}${unwanted.length?` and would part with ${group(unwanted)}`:''}.</div>
+    <div class="trade">
+      <div class="trade-row"><span class="label">You want</span><div class="give">${S.sel.face.size?[...S.sel.face].map(i=>tag(S.faceUp[i])).join(''):'<span class="fmeta">no market cards</span>'}</div></div>
+      <div class="trade-row"><span class="label">You give</span><div class="give">${give.length?give.map(tag).join(''):'<span class="fmeta">nothing (ask for a gift)</span>'}</div></div>
+      <div class="trade-row">${wantSelect(b.name)}<button data-act="propose">Propose to ${b.name}</button><button class="ghost" data-act="pass">Done, let ${b.name} continue</button></div>
+      ${S.reply?`<div class="reply">${S.reply}</div>`:''}
+    </div>`;
+  }
+  else {
+    status=`<span class="who">${cur.name}'s turn.</span> ${S.note||''}`;
+    body=`<div class="faceup">${S.faceUp.map(t=>card(t)).join('')}</div>`;
+  }
+  return `<div class="status">${status}</div>${S.msg?`<div class="msg">${S.msg}</div>`:''}${body}`;
+}
+function fieldHTML(f,i){
+  const p=me(), t=plantType(), ok=t && (!f.n || f.t===t);
+  const c=f.n?coinsFor(f.t,f.n):0;
+  return `<div class="field ${ok?'can':''} ${t&&!ok?'no':''}" data-act="field" data-i="${i}" ${ok?'role="button" tabindex="0"':''} aria-label="Field ${i+1}">
+    <span class="label flabel">Field ${i+1}</span>
+    ${f.n?`<div class="stack">${card(f.t)}<span class="count">${f.n}</span></div>
+      <span class="fmeta">Worth <b>${c}</b> coin${c===1?'':'s'} now</span>
+      <button class="ghost" data-act="harvest" data-i="${i}" ${canHarvest(p,i)&&!S.over?'':'disabled'}>Harvest</button>`
+    :`<div class="empty">Empty</div>`}
+  </div>`;
+}
+function render(){
+  if(!S) return;
+  const p=me();
+  $('#deck').textContent=S.deck.length; $('#disc').textContent=S.discard.length; $('#pass').textContent=Math.min(S.runOuts+1,3);
+  const top=S.discard[S.discard.length-1];
+  $('#disctop').innerHTML=top?`<span class="chip" style="--bean:${TYPES[top].c}"></span>${nm(top)}`:'–';
+  $('#opps').innerHTML=S.players.slice(1).map((b,k)=>oppHTML(b,k+1)).join('');
+  $('#market').innerHTML=marketHTML();
+  $('#you').classList.toggle('active', S.cur===0 && !S.over);
+  $('#mycoins').textContent=p.coins;
+  $('#myfields').innerHTML=p.fields.map(fieldHTML).join('');
+  $('#mypendwrap').innerHTML = p.pending.length ? `<div class="rowlabel"><span class="label">To plant</span><span class="fmeta">Pick one, then a field. All of these must be planted.</span></div>
+    <div class="hand">${p.pending.map((t,i)=>card(t,{cls:'pick'+(i===Math.min(S.pendSel,p.pending.length-1)&&S.phase==='humanPlant'?' sel':''),act:'pend',i})).join('')}</div>` : '';
+  const tradingHand = (S.cur===0 && S.phase==='trade') || S.phase==='botTrade';
+  $('#myhand').innerHTML = p.hand.length ? p.hand.map((t,i)=>{
+    const isNext = i===0 && S.cur===0 && S.phase==='plant' && S.planted<2;
+    return card(t,{cls:(tradingHand?'pick':'')+(S.sel.hand.has(i)?' sel':'')+(isNext?' next':''), act:tradingHand?'hand':'', i, tag:i===0?'plant next':''});
+  }).join('') : '<span class="fmeta">No cards in hand.</span>';
+  $('#log').innerHTML=S.log.map(l=>`<li>${l}</li>`).join('');
+}
+
+/* ---------- input ---------- */
+function handle(el){
+  const act=el.dataset.act, i=+el.dataset.i;
+  if(act==='new'){ $('#over').hidden=true; newGame(); return; }
+  if(act==='closeover'){ $('#over').hidden=true; return; }
+  if(!S || S.over) return;
+  const p=me();
+  switch(act){
+    case 'field': clickField(i); break;
+    case 'harvest': if(canHarvest(p,i)){ harvest(p,i); S.msg=''; render(); } break;
+    case 'flip': humanFlip(); break;
+    case 'face': S.sel.face.has(i)?S.sel.face.delete(i):S.sel.face.add(i); S.offers=null; S.reply=''; render(); break;
+    case 'hand': S.sel.hand.has(i)?S.sel.hand.delete(i):S.sel.hand.add(i); S.offers=null; S.reply=''; render(); break;
+    case 'pend': S.pendSel=i; render(); break;
+    case 'ask': askTable(); break;
+    case 'take': takeOffer(i); break;
+    case 'endtrade': humanEndTrading(); break;
+    case 'endturn': humanEndTurn(); break;
+    case 'propose': proposeToActive(); break;
+    case 'pass': resume(); break;
+  }
+}
+document.addEventListener('click',e=>{ const el=e.target.closest('[data-act]'); if(el && !el.disabled) handle(el); });
+document.addEventListener('keydown',e=>{ if((e.key==='Enter'||e.key===' ') && e.target.matches('[data-act][role="button"]')){ e.preventDefault(); handle(e.target); } });
+document.addEventListener('change',e=>{
+  if(e.target.id==='want'){ S.want=e.target.value; S.qty=1; S.offers=null; render(); }
+  else if(e.target.id==='qty'){ S.qty=+e.target.value; S.offers=null; render(); }
+  else if(e.target.id==='speed'){ speed=+e.target.value; }
+  else if(e.target.id==='autopass'){ autoPass=e.target.checked; if(autoPass && S && S.phase==='botTrade') resume(); }
+});
+newGame();
+</script>
