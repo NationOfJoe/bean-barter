@@ -198,7 +198,9 @@ details.rules ol{padding-left:18px;margin:6px 0}
   #myfields{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px}
   .field{width:auto;min-height:0;padding:8px 6px;gap:6px;border-radius:10px}
   .field .empty{width:70px;height:98px;border-radius:8px}
-  .count{min-width:24px;height:24px;font-size:13px;right:-8px;top:-8px}
+  .count{min-width:24px;height:24px;font-size:13px;right:-14px;top:-12px}
+  .mini .long{display:none}
+  .minis{gap:4px}
   .handbar{position:fixed;left:0;right:0;bottom:0;z-index:4;background:var(--plot);border-top:1px solid var(--marigold);
     padding:6px 16px calc(4px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 16px rgba(0,0,0,.35)}
   .handbar .fmeta{display:none}
@@ -673,7 +675,7 @@ const meP = () => V.players[V.you];
 const seatBadge = p => p.kind==='bot' ? '<span class="badge ai">AI</span>' : (!p.connected ? '<span class="badge off">Offline</span>' : '');
 
 function oppHTML(b,bi){
-  const minis=b.fields.map(f=>f.n?`<div class="mini"><span class="chip" style="--bean:${TYPES[f.t].c}"></span>${nm(f.t)} <b class="num">×${f.n}</b></div>`:`<div class="mini empty">empty field</div>`).join('');
+  const minis=b.fields.map(f=>f.n?`<div class="mini"><span class="chip" style="--bean:${TYPES[f.t].c}"></span>${nm(f.t)} <b class="num">×${f.n}</b></div>`:`<div class="mini empty">empty<span class="long"> field</span></div>`).join('');
   const waitingOn = V.phase==='trade' && V.players[V.cur].kind==='bot' && b.kind==='human' && b.connected && bi!==V.cur && !V.passed.includes(bi);
   return `<article class="opp ${V.cur===bi&&!V.over?'active':''}">
     <div class="opp-top"><span class="opp-name">${esc(b.name)} ${seatBadge(b)}</span><span class="opp-meta"><span><b class="num">${b.coins}</b> coins</span></span></div>
