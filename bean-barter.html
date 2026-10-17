@@ -75,7 +75,8 @@ h1 small{display:block;font-family:var(--f-body);font-size:12px;color:var(--mute
 .pend-row{font-size:12px;color:var(--muted);display:flex;gap:4px;flex-wrap:wrap;align-items:center}
 
 /* market */
-.mid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px}
+#game{display:grid;grid-template-columns:minmax(0,1fr) 300px;grid-template-areas:"opps opps" "market log" "you you";gap:14px;align-items:start}
+#opps{grid-area:opps} #market{grid-area:market} aside.logbox{grid-area:log} #you{grid-area:you}
 .market{background:var(--plot);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:14px;align-content:start;min-width:0}
 .status{font-size:16px;font-weight:600;line-height:1.4;text-wrap:balance}
 .status .who{color:var(--marigold)}
@@ -149,8 +150,53 @@ details.rules ol{padding-left:18px;margin:6px 0}
 #banner{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--warn);color:var(--ink);display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;font-weight:700;z-index:6}
 #banner button{background:var(--ink);color:var(--sprout)}
 
-@media (max-width:900px){.mid{grid-template-columns:1fr} aside.logbox{max-height:240px}.setup-grid{grid-template-columns:1fr}}
-@media (max-width:700px){.field{width:calc(50% - 6px);min-width:0}}
+/* Grid and flex children default to min-width:auto, which lets the scrolling hand row widen the whole page. */
+.wrap>*, #game>*, .you>*, .market>*, .handbar>*{min-width:0}
+@media (max-width:900px){
+  #game{grid-template-columns:minmax(0,1fr);grid-template-areas:"opps" "market" "you" "log"}
+  aside.logbox{max-height:220px}
+  .setup-grid{grid-template-columns:1fr}
+}
+/* Phones: smaller cards, fields side by side, compact rivals, and the hand pinned to the bottom of the screen
+   so you can pick cards while looking at the market. */
+@media (max-width:600px){
+  .wrap{padding-block:10px 200px;gap:10px}
+  h1{font-size:26px}
+  h1 small{font-size:10px;margin-top:4px}
+  header{gap:8px 14px}
+  .stats{gap:6px 14px}
+  .stat b{font-size:15px}
+  .controls label{font-size:12px}
+  #game{gap:10px}
+  .card{--w:70px;height:98px;padding:5px 4px 4px;border-radius:8px}
+  .card .cname{font-size:11px}
+  .card .bean{width:27px;height:37px}
+  .card.t-blackeye .bean::after{width:10px;height:8px;left:9px;top:14px}
+  .meter{font-size:9px;gap:1px}
+  .m{min-width:0;flex:1;padding:1px 0}
+  .m i{font-size:8px}
+  .card.sel,.card.sel.pick:hover{transform:translateY(-7px)}
+  .nexttag{font-size:9px;top:-10px}
+  #opps{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+  .opp{padding:10px;gap:6px;border-radius:10px}
+  .opp-name{font-size:18px}
+  .mini{font-size:12px;padding:3px 6px 3px 3px}
+  .chip{width:13px;height:18px}
+  .market{padding:12px;gap:10px}
+  .status{font-size:15px}
+  .faceup{gap:10px}
+  .you{padding:12px;gap:10px}
+  .you-top h2{font-size:22px}
+  #myfields{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px}
+  .field{width:auto;min-height:0;padding:8px 6px;gap:6px;border-radius:10px}
+  .field .empty{width:70px;height:98px;border-radius:8px}
+  .count{min-width:24px;height:24px;font-size:13px;right:-8px;top:-8px}
+  .handbar{position:fixed;left:0;right:0;bottom:0;z-index:4;background:var(--plot);border-top:1px solid var(--marigold);
+    padding:6px 16px calc(4px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 16px rgba(0,0,0,.35)}
+  .handbar .fmeta{display:none}
+  .hand{min-height:0;padding:10px 2px 4px;gap:6px}
+  #banner{z-index:7}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -209,28 +255,24 @@ details.rules ol{padding-left:18px;margin:6px 0}
   <section id="lobby" class="lobby" hidden></section>
 
   <div id="game" hidden>
-    <div style="display:grid;gap:14px">
-      <section id="opps" aria-label="Other players"></section>
-      <div class="mid">
-        <section class="market" id="market" aria-live="polite"></section>
-        <aside class="logbox">
-          <span class="label">Table talk</span>
-          <ul id="log"></ul>
-        </aside>
+    <section id="opps" aria-label="Other players"></section>
+    <section class="market" id="market" aria-live="polite"></section>
+    <aside class="logbox">
+      <span class="label">Table talk</span>
+      <ul id="log"></ul>
+    </aside>
+    <section class="you" id="you">
+      <div class="you-top">
+        <h2 id="myname-h">Your farm</h2>
+        <div class="coins"><span class="coin"></span><span><b class="num" id="mycoins">0</b> coins</span></div>
       </div>
-      <section class="you" id="you">
-        <div class="you-top">
-          <h2 id="myname-h">Your farm</h2>
-          <div class="coins"><span class="coin"></span><span><b class="num" id="mycoins">0</b> coins</span></div>
-        </div>
-        <div id="myfields"></div>
-        <div id="mypendwrap"></div>
-        <div>
-          <div class="rowlabel"><span class="label">Your hand</span><span class="fmeta">Kept in the order you drew it. Planting always takes the card on the left.</span></div>
-          <div class="hand" id="myhand"></div>
-        </div>
-      </section>
-    </div>
+      <div id="myfields"></div>
+      <div id="mypendwrap"></div>
+      <div class="handbar">
+        <div class="rowlabel"><span class="label">Your hand</span><span class="fmeta">Kept in the order you drew it. Planting always takes the card on the left.</span></div>
+        <div class="hand" id="myhand"></div>
+      </div>
+    </section>
   </div>
 
   <details class="rules">
