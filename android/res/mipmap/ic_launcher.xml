@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icon for Android 5 to 7, which don't support adaptive icons. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/icon_bg" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/ic_bean" />
+</layer-list>

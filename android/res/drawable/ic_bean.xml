@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A green bean on a 108dp adaptive-icon canvas; the bean stays inside the central 66dp safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group android:pivotX="54" android:pivotY="54" android:rotation="-16">
+        <path
+            android:fillColor="#3B7A2C"
+            android:pathData="M54,30 C67,30 74,39 72,49 C71,54 67,56 68,61 C70,71 64,80 54,80 C42,80 36,70 36,56 C36,40 43,30 54,30 Z" />
+        <path
+            android:fillColor="#4F9C3A"
+            android:pathData="M54,30 C67,30 74,39 72,49 C71,54 67,56 68,61 C70,68 66,74 59,77 C48,78 40,70 40,56 C40,42 45,32 54,30 Z" />
+        <path
+            android:fillColor="#9FD38A"
+            android:fillAlpha="0.75"
+            android:pathData="M47,39 C50,35 56,35 57,38 C58,41 53,43 50,46 C47,49 44,44 47,39 Z" />
+    </group>
+    <path
+        android:fillColor="#EAA93B"
+        android:pathData="M70,72 m-7,0 a7,7 0 1,0 14,0 a7,7 0 1,0 -14,0" />
+</vector>

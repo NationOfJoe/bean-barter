@@ -28,10 +28,23 @@ This is an unofficial fan project and isn't affiliated with AMIGO or Rio Grande 
 
 The game ends when the deck runs out for the third time. Most coins wins.
 
+## Android app
+
+`android/` builds an APK that plays fully offline: the game page, its fonts and PeerJS are packed inside the app. Playing against the AI needs no connection; online rooms still need internet.
+
+```
+bash android/build-apk.sh
+```
+
+This writes `android/out/BeanBarter.apk`. It uses the plain Android SDK tools (platform 29, build-tools 29.0.2) plus a JDK, Node and Python, with no Gradle. The first build downloads the fonts and PeerJS into `android/.cache` and creates a signing key, `android/beanbarter.keystore`, with its password in `android/keystore-password.txt`. Keep both: Android only installs an update over an existing install when it's signed with the same key. They're kept out of git.
+
+To install, copy the APK to the phone and open it. Android asks you to allow installs from that app (Files, Chrome, etc.) the first time.
+
 ## Files
 
 - `bean-barter.html` is the game source.
 - `index.html` is generated from it by `build.js`. This is the page GitHub Pages serves, and you can also open it straight from disk.
+- `android/` holds the Android wrapper: `MainActivity.java` shows the game in a full-screen WebView, `make-assets.js` packs the offline page, and `build-apk.sh` builds and signs the APK.
 - `tests/simulate.js` plays 15 full games without a browser, with 1 to 3 human seats and 0 to 3 AI, and checks that each game ends after the third deck run-out, all 104 cards are accounted for, and 3-player games get three fields.
 
 ## Development

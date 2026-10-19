@@ -1,2 +1,8 @@
 tests/run.js
 node_modules/
+android/.build/
+android/.cache/
+android/assets/
+android/out/
+android/*.keystore
+android/keystore-password.txt

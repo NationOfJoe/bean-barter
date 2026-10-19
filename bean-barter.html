@@ -15,7 +15,7 @@
 }
 html,body{background:var(--loam);color:var(--sprout);font-family:var(--f-body)}
 body{background:radial-gradient(1200px 600px at 50% -10%, var(--plot-2), var(--loam) 70%) fixed, var(--loam)}
-.wrap{max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:14px 40px;display:grid;gap:14px}
+.wrap{max-width:1240px;margin:0 auto;padding:14px 16px 40px;display:grid;gap:14px}
 button,select,input{font:inherit}
 button{background:var(--marigold);color:var(--ink);border:0;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer}
 button.ghost{background:transparent;color:var(--sprout);border:1px solid var(--line)}
@@ -141,7 +141,7 @@ details.rules ol{padding-left:18px;margin:6px 0}
 .stack .card{box-shadow:3px 3px 0 -1px var(--stock),3px 3px 0 0 rgba(0,0,0,.3),6px 6px 0 -1px var(--stock),6px 6px 0 0 rgba(0,0,0,.3)}
 
 /* overlays */
-#over{position:fixed;inset:0;background:rgba(10,14,9,.78);display:grid;place-items:center;padding:16px;z-index:5}
+#over{position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(10,14,9,.78);display:grid;place-items:center;padding:16px;z-index:5}
 .overbox{background:var(--plot);border:1px solid var(--marigold);border-radius:16px;padding:24px;max-width:420px;width:100%;display:grid;gap:14px}
 .overbox h2{font-family:var(--f-display);font-weight:400;color:var(--marigold);font-size:34px;margin:0;line-height:1.1}
 .rank{display:grid;gap:6px}
@@ -160,7 +160,7 @@ details.rules ol{padding-left:18px;margin:6px 0}
 /* Phones: smaller cards, fields side by side, compact rivals, and the hand pinned to the bottom of the screen
    so you can pick cards while looking at the market. */
 @media (max-width:600px){
-  .wrap{padding-block:10px 200px;gap:10px}
+  .wrap{padding-top:10px;padding-bottom:200px;gap:10px}
   h1{font-size:26px}
   h1 small{font-size:10px;margin-top:4px}
   header{gap:8px 14px}
@@ -200,6 +200,13 @@ details.rules ol{padding-left:18px;margin:6px 0}
   #banner{z-index:7}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* Older Android WebViews (before Chrome 84) ignore gap in flex rows; boot() adds .no-flexgap there and margins stand in. */
+.no-flexgap .stats>*,.no-flexgap .controls>*,.no-flexgap .controls label>*,.no-flexgap .field-row>*,.no-flexgap .opp-top>*,
+.no-flexgap .opp-name>*,.no-flexgap .minis>*,.no-flexgap .pend-row>*,.no-flexgap .trade-row>*,.no-flexgap .give>*,
+.no-flexgap .faceup>*,.no-flexgap .offer>*,.no-flexgap .acts>*,.no-flexgap .coins>*,.no-flexgap .rowlabel>*,
+.no-flexgap .linkbox>*,.no-flexgap .stepper>*,.no-flexgap .mini>*,.no-flexgap .tag>*,.no-flexgap header>*{margin-right:8px;margin-bottom:4px}
+.no-flexgap .hand>*,.no-flexgap #myfields>*{margin-right:8px}
+.no-flexgap .backs>*{margin-right:2px}
 </style>
 
 <div class="wrap">
@@ -309,6 +316,8 @@ const ORDER = Object.keys(TYPES);
 const BOT_NAMES = ['Mira','Otto','Juno','Pip'];
 const MIN_PLAYERS = 3, MAX_PLAYERS = 5;
 const PEER_PREFIX = 'beanbarter-';
+// Inside the Android app the page is a local file, so invites point at the website instead.
+const SITE_URL = location.protocol==='file:' ? 'https://nationofjoe.github.io/bean-barter/' : location.origin+location.pathname;
 const $ = s => document.querySelector(s);
 
 /* S: full game state, only on the host. V: what this device may see (its own view). */
@@ -344,7 +353,7 @@ function startGame(seats){
         ask:null, proposals:[], passed:[], replies:{}, note:'', over:false, result:null, tradeSeq:0, pid:0 };
   waiter=null; overDismissed=false;
   for(let r=0;r<5;r++) S.players.forEach(p=>p.hand.push(S.deck.pop()));
-  log(`New game: ${S.players.map(p=>p.name).join(', ')}. ${S.players[0].name} is the starting player.${nf===3?' Three players, so everyone has three fields.':''}`);
+  log(`New game: ${S.players.map(p=>p.name).join(', ')}. ${S.players[0].name==='You'?'You are':S.players[0].name+' is'} the starting player.${nf===3?' Three players, so everyone has three fields.':''}`);
   startTurn(0);
 }
 function startTurn(seat){
@@ -796,7 +805,7 @@ function render(){
   $('#opps').innerHTML=V.players.map((b,i)=>i===V.you?'':oppHTML(b,i)).join('');
   $('#market').innerHTML=marketHTML();
   $('#you').classList.toggle('active', V.cur===V.you && !V.over);
-  $('#myname-h').textContent = `${p.name}'s farm`;
+  $('#myname-h').textContent = 'Your farm';
   $('#mycoins').textContent=p.coins;
   $('#myfields').innerHTML=p.fields.map(fieldHTML).join('');
   $('#mypendwrap').innerHTML = p.pending.length ? `<div class="rowlabel"><span class="label">To plant</span><span class="fmeta">Pick one, then a field. All of these must be planted.</span></div>
@@ -962,7 +971,7 @@ function playAgain(){
 }
 function renderLobby(){
   const lv=LV; if(!lv) return;
-  const total=lv.humans.length+lv.bots, link=`${location.origin}${location.pathname}#${lv.code}`;
+  const total=lv.humans.length+lv.bots, link=`${SITE_URL}#${lv.code}`;
   const seats=[...lv.humans.map((n,i)=>`<div class="seat"><span>${esc(n)}${i===lv.you?' (you)':''}</span><span class="badge">${i===0?'Host':'Player'}</span></div>`),
     ...Array.from({length:lv.bots},()=>`<div class="seat"><span>AI rival</span><span class="badge ai">AI</span></div>`)].join('');
   $('#lobby').innerHTML = `
@@ -1073,6 +1082,12 @@ document.addEventListener('change',e=>{
 });
 
 function boot(){
+  try{
+    const d=document.createElement('div'); d.style.cssText='display:flex;flex-direction:column;row-gap:1px;position:absolute;visibility:hidden';
+    d.appendChild(document.createElement('div')); d.appendChild(document.createElement('div'));
+    document.body.appendChild(d); const ok=d.scrollHeight===1; d.remove();
+    if(!ok) document.documentElement.classList.add('no-flexgap');
+  }catch(e){}
   try{ const n=localStorage.getItem('bb-name'); if(n) $('#myname').value=n; }catch(e){}
   const h=(location.hash||'').slice(1).toUpperCase();
   if(/^[A-Z0-9]{5}$/.test(h)){ $('#joincode').value=h; setupMsg('You were invited to a game. Enter your name and press Join game.'); }
