@@ -30,6 +30,8 @@ The game ends when the deck runs out for the third time. Most coins wins.
 
 ## Android app
 
+**Download:** [BeanBarter.apk](https://github.com/NationOfJoe/bean-barter/releases/latest/download/BeanBarter.apk) from the [latest release](https://github.com/NationOfJoe/bean-barter/releases/latest). Open it on your phone to install; Android asks you to allow installs from your browser the first time.
+
 `android/` builds an APK that plays fully offline: the game page, its fonts and PeerJS are packed inside the app. Playing against the AI needs no connection; online rooms still need internet.
 
 ```
